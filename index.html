@@ -42,6 +42,8 @@
 
             
 
+
+
      
     
 
@@ -366,16 +368,18 @@
         }
 
         
-        /* 增加亚麻纸纹理质感遮罩 (不影响底层壁纸拉伸) */
+                /* 🌟 优化：移除杂质，增加清透的动态光学遮罩，提升壁纸清晰完美度 */
         .screen::before {
             content: '';
             position: absolute; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='6' height='6' fill='%23fafaf8' opacity='0.05'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23e8e8e4' opacity='0.4'/%3E%3Crect x='3' y='3' width='1' height='1' fill='%23e8e8e4' opacity='0.2'/%3E%3C/svg%3E");
-            background-size: 6px 6px;
-            background-repeat: repeat;
+            /* 顶部微微加深防止看不清时间，底部托底防图标泛白，中间留空保证原壁纸完美呈现 */
+            background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.2) 100%);
             pointer-events: none;
             z-index: 0;
+            /* 柔光混合，让底层壁纸更鲜艳清晰 */
+            mix-blend-mode: soft-light;
         }
+
 
         /* 状态栏 */
         .status-bar { 
@@ -954,8 +958,8 @@ html body #chat-app #user-input:not(:placeholder-shown) ~ .tools-plus-btn {
         .memory-card .time { color: var(--text-sub); font-size: 12px; text-align: right; }
         .ai-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; background: rgba(135,192,202,0.2); color: var(--accent); padding: 2px 6px; border-radius: 4px;}
 
-        /* --- 音乐播放器 --- */
-        #music-app { background: #000; color: #fff; overflow: hidden; position: relative; }
+         /* --- 音乐播放器 --- */
+        #music-app { background: #000; color: #fff; overflow: hidden; }
         .music-bg { position: absolute; top:0; left:0; width:100%; height:100%; background-size: cover; background-position: center; filter: blur(40px) brightness(0.4); transform: scale(1.2); z-index: 1; transition: background-image 0.5s ease; will-change: transform, filter; }
         .music-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; padding: 60px 20px 40px; }
         .music-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; margin-bottom: 40px; font-weight: 500; }
@@ -1214,9 +1218,9 @@ input:checked + .slider:before {
         .gesture-indicator::after { content: ''; position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 15px var(--accent); animation: pulse 1.5s infinite;}
         @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(3); opacity: 0; } }
 
-         /* 谈心 App 专属小说化排版 */
+          /* 谈心 App 专属小说化排版 */
         #heart-chat-app { 
-            background-size: cover; background-position: center; position: relative; 
+            background-size: cover; background-position: center; 
             /* 开放给 JS 的动态排版变量 */
             --heart-overlay: rgba(0,0,0,0.6);
             --heart-fs: 16px;
@@ -1227,6 +1231,7 @@ input:checked + .slider:before {
             content: ''; position: absolute; top:0; left:0; right:0; bottom:0; 
             background: var(--heart-overlay); z-index: 1; pointer-events: none; transition: background 0.3s ease;
         }
+
         
         .novel-block { margin-bottom: 25px; line-height: var(--heart-lh); letter-spacing: var(--heart-ls); animation: fadeIn 0.8s ease; z-index: 10; position: relative; }
         .novel-block.char { color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
@@ -1662,9 +1667,10 @@ input:checked + .slider:before {
         }
         .moments-comment-bar.show { display: flex; }
 
-        .moments-comment-bar input { flex: 1; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); outline: none; font-size: 15px; }
-        .moments-comment-bar button { background: #07c160; color: #fff; border: none; border-radius: 8px; padding: 0 18px; font-weight: bold; font-size: 15px; cursor: pointer; }
+                .moments-comment-bar input { flex: 1; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); outline: none; font-size: 15px; }
+        .moments-comment-bar button { background: #07c160; color: #fff; border: none; border-radius: 8px; padding: 0 18px; font-weight: bold; font-size: 15px; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
         .moments-comment-bar button:active { transform: scale(0.95); }
+
 
 
 
@@ -1861,6 +1867,26 @@ input:checked + .slider:before {
         .tl-check { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--accent); display: none; }
         .theme-layout-card.active .tl-check { display: block; }
 
+                                /* 强行保障原生和主流气泡模式下头像永远显示，免疫任何误填代码的隐藏 */
+        html body:not(.hide-chat-avatar) #chat-app:not([class*="layout-imessage"]) #chat-container .msg-avatar {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* 自由控制聊天头像隐藏与排版调整 */
+        body.hide-chat-avatar #chat-app #chat-container .msg-avatar {
+            display: none !important;
+        }
+        body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.char {
+            padding-left: 15px !important;
+        }
+        body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
+            padding-right: 15px !important;
+        }
+
+
+
                                                         /* ========================================== */
         /* 1. WeChat 完完整整仿微信 (包含新增的三款变体颜色) */
         /* ========================================== */
@@ -1919,9 +1945,9 @@ input:checked + .slider:before {
         html body #chat-app.layout-wechat .fa-phone-alt { display: none !important; }
         /* ========================================== */
         
-        /* 2. 修复：恢复正常的微信适中间隔与头像 (改为 16px) */
+                /* 2. 修复：恢复正常的微信适中间隔与头像 (改为 16px) */
         html body #chat-app.layout-wechat #chat-container .msg-avatar { border-radius: 6px !important; width: 40px !important; height: 40px !important; border: none !important; margin-top: 0 !important;}
-        html body #chat-app.layout-wechat #chat-container .msg-wrapper { gap: 12px !important; margin-bottom: 12px !important; align-items: flex-start !important; }
+        html body #chat-app.layout-wechat #chat-container .msg-wrapper { gap: 6px !important; margin-bottom: 12px !important; align-items: flex-start !important; }
 
         /* ================= 气泡核心重构：纯色扁平化 ================= */
         
@@ -2063,9 +2089,10 @@ input:checked + .slider:before {
             background-position: center;
         }
         
-        /* 气泡外层，TG头像在底部对齐 */
-        html body #chat-app.layout-telegram .msg-wrapper { gap: 8px !important; margin-bottom: 4px !important; align-items: flex-end !important; }
-        html body #chat-app.layout-telegram .msg-avatar { border-radius: 50% !important; width: 36px !important; height: 36px !important; margin-bottom: 2px !important;}
+       
+           /* 气泡外层，TG头像在底部对齐 */
+        html body #chat-app.layout-telegram .msg-wrapper { gap: 4px !important; margin-bottom: 4px !important; align-items: flex-end !important; }
+     html body #chat-app.layout-telegram .msg-avatar { border-radius: 50% !important; width: 36px !important; height: 36px !important; margin-bottom: 2px !important;}
         html body #chat-app.layout-telegram .msg-content-box { position: relative !important; max-width: 80% !important; }
         
         /* 强制隐藏默认的时间，把它移进气泡 */
@@ -2165,8 +2192,8 @@ html body #chat-app.layout-imessage2 .chat-info h3 i { display: none !important;
 html body #chat-app.layout-imessage2 .chat-info p { display: none !important; }
 html body #chat-app.layout-imessage2 .chat-header-left > i { color: #0B84FF !important; }
 html body #chat-app.layout-imessage2 .fa-phone-alt { display: none !important; }
-html body #chat-app.layout-imessage2 .msg-avatar { display: none !important; }
 html body #chat-app.layout-imessage2 .msg-wrapper { margin-bottom: 16px !important; }
+
 
 /* 隐藏原有的 ::before 伪元素（防止与新的 ::after 尾巴冲突） */
 html body #chat-app.layout-imessage2 #chat-container .msg::before { display: none !important; }
@@ -2381,10 +2408,11 @@ html body #chat-app.layout-qq-simple .msg-avatar {
     border: none !important;
 }
 html body #chat-app.layout-qq-simple #chat-container .msg-wrapper {
-    gap: 10px !important;
+    gap: 6px !important;
     margin-bottom: 12px !important;
     align-items: flex-start !important;
 }
+
 
 /* 气泡核心：长方形微圆润 */
 html body #chat-app.layout-qq-simple #chat-container .msg:not(.image-bubble):not(.sticker-bubble):not(.music-share-bubble):not(.pet-share-bubble):not(.transfer-bubble):not(.file-bubble):not(.tieba-share-bubble):not(.x-share-bubble):not(.survey-share-bubble):not(.health-share-bubble):not(.shop-share-bubble):not(.remote-action-bubble) {
@@ -2504,9 +2532,9 @@ html body #chat-app.layout-imessage { background-color: #FFFFFF !important; }
         html body #chat-app.layout-imessage .chat-header-left > i { align-self: flex-start; margin-top: 55px; color: #0B84FF !important; font-size: 24px !important; }
         html body #chat-app.layout-imessage .fa-phone-alt { display: none !important; } 
 
-        /* 气泡设定保持 iMessage 经典原版配色 */
-        html body #chat-app.layout-imessage .msg-avatar { display: none !important; } /* 苹果短信默认不显示列表头像 */
+                /* 气泡设定保持 iMessage 经典原版配色 */
         html body #chat-app.layout-imessage .msg-wrapper { margin-bottom: 4px !important; }
+
         html body #chat-app.layout-imessage #chat-container .msg:not(.image-bubble):not(.sticker-bubble):not(.music-share-bubble):not(.pet-share-bubble):not(.transfer-bubble):not(.file-bubble):not(.tieba-share-bubble):not(.x-share-bubble) { 
             border-radius: 20px !important; font-size: 16px !important; padding: 8px 14px !important; box-shadow: none !important; border: none !important;
         }
@@ -2530,6 +2558,7 @@ html body #chat-app.layout-imessage { background-color: #FFFFFF !important; }
     font-size: 26px !important; 
     margin-left: 12px !important;
 }
+
 
 
 
@@ -4051,14 +4080,14 @@ html body #chat-app.layout-qq-simple .chat-pip-btn { color: #000000 !important; 
             z-index: 2;
         }
         
-        .msg-content-box { 
+                .msg-content-box { 
             display: flex; 
             flex-direction: column; 
             max-width: 75%; 
-            margin: 0 10px;
+            margin: 0 4px !important;
             z-index: 2;
         }
-        
+
         /* 4. 气泡本体基础样式 */
         .msg { 
             padding: 10px 15px; 
@@ -4240,6 +4269,279 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
     height: 140px !important;
     padding-top: 80px !important;
 }
+
+/* ========================================== */
+/* 🌟 高级液态玻璃聊天室 & 美式排版 CSS 🌟 */
+/* ========================================== */
+
+/* --- 👇 新增：正常聊天界面头像强制显示与基础舒适排版 👇 --- */
+html body #chat-app #chat-container .msg-wrapper {
+    margin-bottom: 18px !important;
+    gap: 6px !important;
+}
+
+
+html body #chat-app #chat-container .msg-avatar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    background-size: cover !important;
+    background-position: center !important;
+    flex-shrink: 0 !important;
+    border: 0.5px solid rgba(150,150,150,0.15) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    z-index: 2 !important;
+}
+
+/* 兜底：苹果 iMessage 专属主题原生是不带头像的，予以排除隐藏 */
+html body #chat-app.layout-imessage #chat-container .msg-avatar,
+html body #chat-app.layout-imessage2 #chat-container .msg-avatar {
+    display: none !important;
+}
+/* --- 👆 头像修复结束 👆 --- */
+
+
+/* 聊天应用底层修复，腾出底部导航栏空间 */
+#chat-app.pip-active { padding-bottom: 0 !important; }
+#chat-app.pip-active .chat-bottom-tab-bar { display: none !important; }
+
+/* 底部液态导航栏 */
+.chat-bottom-tab-bar {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 75px;
+    display: flex; justify-content: space-around; align-items: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.02)) !important;
+    backdrop-filter: blur(40px) saturate(200%) !important; -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+    border-top: 0.5px solid rgba(255,255,255,0.15) !important;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 1000; padding-bottom: 12px;
+}
+:root.light-mode .chat-bottom-tab-bar { background: rgba(255,255,255,0.8) !important; border-top-color: rgba(0,0,0,0.05) !important; }
+
+.chat-tab-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    color: var(--text-sub); opacity: 0.6; cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    width: 30%; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.chat-tab-btn i { font-size: 22px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.chat-tab-btn span { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+.chat-tab-btn.active { color: var(--accent); opacity: 1; }
+.chat-tab-btn.active i { transform: scale(1.15) translateY(-2px); }
+
+
+/* --- 通讯录与朋友圈面板重构液态感 --- */
+.my-card { background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)); backdrop-filter: blur(25px) saturate(180%); border-radius: 24px; border: 0.5px solid rgba(255,255,255,0.2); padding: 20px; display: flex; align-items: center; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+.my-avatar { width: 64px; height: 64px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1.5px solid rgba(255,255,255,0.4); margin-right: 15px; }
+.contact-item { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); backdrop-filter: blur(20px) saturate(180%); border-radius: 20px; border: 0.5px solid rgba(255,255,255,0.15); padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+.contact-avatar { width: 52px; height: 52px; border-radius: 16px; margin-right: 15px; border: 1px solid rgba(255,255,255,0.3); }
+
+.moments-header { position: absolute !important; padding: 50px 20px 10px !important; z-index: 100; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; text-shadow: 0 1px 6px rgba(0,0,0,0.8); color: #fff; }
+.moments-cover-container { border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; overflow: hidden; height: 350px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative; margin-bottom: 60px; }
+.moments-cover { width: 100%; height: 100%; object-fit: cover; }
+.moments-user-info { position: absolute; background: rgba(0,0,0,0.25); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 10px 15px; bottom: 20px; right: 25px; display: flex; align-items: center; gap: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.moments-name { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 1px; margin: 0; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+.moments-avatar { width: 60px; height: 60px; border-radius: 18px; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
+
+.moments-feed { padding: 0 15px 20px; display: flex; flex-direction: column; gap: 20px; }
+.moment-item { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); backdrop-filter: blur(25px) saturate(180%); border-radius: 28px; border: 0.5px solid rgba(255,255,255,0.15); padding: 22px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.06), inset 0 1px 2px rgba(255,255,255,0.2); display: flex; gap: 14px; }
+.moment-avatar { width: 50px; height: 50px; border-radius: 16px; border: 1.5px solid rgba(255,255,255,0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.moment-author { color: var(--accent); font-size: 17px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px; }
+.moment-text { font-size: 15px; line-height: 1.6; color: var(--text-main); margin-bottom: 12px; font-weight: 500; }
+.moment-img { max-width: 85%; border-radius: 16px; margin-bottom: 12px; border: 0.5px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+
+.moments-comment-bar { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 20px 30px; display: none; gap: 12px; z-index: 1000; background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)); backdrop-filter: blur(35px) saturate(180%); border-top: 0.5px solid rgba(255,255,255,0.2); box-shadow: 0 -4px 25px rgba(0,0,0,0.05); }
+.moments-comment-bar input { flex: 1; background: rgba(0,0,0,0.1); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 12px 18px; color: var(--text-main); outline: none; font-size: 15px; }
+.moments-comment-bar button { background: var(--accent); color: #000; border: none; border-radius: 20px; padding: 0 22px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); flex-shrink: 0; white-space: nowrap; }
+
+:root.light-mode .my-card, :root.light-mode .contact-item, :root.light-mode .moment-item { background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.4)); border-color: rgba(255,255,255,0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.05), inset 0 1px 2px rgba(255,255,255,0.8); }
+:root.light-mode .moments-comment-bar { background: rgba(255,255,255,0.8); border-top-color: rgba(200,200,200,0.5); }
+:root.light-mode .moments-comment-bar input { background: rgba(255,255,255,0.5); border-color: rgba(0,0,0,0.1); }
+
+
+
+
+/* ========================================== */
+/* 🌟 聊天面板背景分离与头像兼容引擎 🌟 */
+/* ========================================== */
+
+/* 1. 解除最外层容器的背景图，改为纯底色 */
+html body #chat-app {
+    background-image: none !important;
+    background-color: var(--bg-base) !important;
+}
+
+/* 2. 只有真正的 Chats 聊天面板才展示角色专属壁纸 */
+#chat-panel-msg {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+/* 3. 通讯录与朋友圈独立背景：跟随角色工坊主题色(--accent)的柔和渐变 */
+#chat-panel-contacts, #chat-panel-moments {
+    background-color: var(--bg-base) !important;
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent) 0%, transparent 60%) !important;
+}
+#chat-panel-contacts > *, #chat-panel-moments > * {
+    position: relative;
+    z-index: 1; /* 保证内容层级不被背景覆盖 */
+}
+
+/* --- 👇 新增：正常聊天界面头像强制显示与基础舒适排版 👇 --- */
+html body #chat-app #chat-container .msg-wrapper {
+    margin-bottom: 18px !important;
+    gap: 6px !important;
+}
+html body #chat-app #chat-container .msg-avatar {
+
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    background-size: cover !important;
+    background-position: center !important;
+    flex-shrink: 0 !important;
+    border: 0.5px solid rgba(150,150,150,0.15) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    z-index: 2 !important;
+}
+/* 兜底：苹果 iMessage 专属主题原生是不带头像的，予以排除隐藏 */
+html body #chat-app.layout-imessage #chat-container .msg-avatar,
+html body #chat-app.layout-imessage2 #chat-container .msg-avatar {
+    display: none !important;
+}
+/* --- 👆 头像及渐变修复结束 👆 --- */
+
+/* 强行保障原生和主流气泡模式下头像永远显示，免疫任何误填代码的隐藏 */
+html body:not(.hide-chat-avatar) #chat-app:not([class*="layout-imessage"]) #chat-container .msg-avatar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* 自由控制聊天头像隐藏与排版调整 */
+body.hide-chat-avatar #chat-app #chat-container .msg-avatar {
+    display: none !important;
+}
+body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.char {
+    padding-left: 15px !important;
+}
+body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
+    padding-right: 15px !important;
+}
+
+        /* ========================================== */
+        /* 🌟 全局抗僵硬/去死板 UI 美化覆盖层 🌟 */
+        /* ========================================== */
+        /* 1. 让所有输入框变圆润，且选中时带呼吸发光，去死板实线 */
+        input[type="text"], input[type="password"], textarea, .setting-input, .setting-textarea, .chat-input {
+            border-radius: 14px !important;
+            border: 1px solid rgba(150, 150, 150, 0.2) !important;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.02) !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        }
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus, .setting-input:focus, .setting-textarea:focus, .chat-input:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent) !important;
+            outline: none !important;
+        }
+
+        /* 2. 让所有长条按键具有呼吸感和微立体悬浮效果 */
+        .save-btn, .del-btn, .modal-btn, .st-btn, .law-btn, .import-btn {
+            border-radius: 16px !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 2px rgba(255,255,255,0.15) !important;
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s, filter 0.2s !important;
+        }
+        .save-btn:active, .del-btn:active, .modal-btn:active, .st-btn:active, .law-btn:active, .import-btn:active {
+            transform: scale(0.95) translateY(2px) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+            filter: brightness(0.9) !important;
+        }
+
+        /* 3. 软化所有的粗糙实线边框，改用高级半透明细线 */
+        .settings-group, .study-card, .campus-post, .law-case-card, .zh-post, .tieba-post, .shop-item, .survey-builder-box {
+            border: 0.5px solid rgba(150, 150, 150, 0.15) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+            border-radius: 18px !important;
+        }
+        .setting-item, .list-item, .campus-comment-item, .moment-item, .eg-question-item {
+            border-bottom: 0.5px solid rgba(150, 150, 150, 0.15) !important;
+        }
+
+        /* 4. 底部和顶部的切换 Tab 去除死板感，增加平滑底色 */
+        .status-tabs, .survey-tabs, .eg-tabs, .zh-tabs {
+            border: 0.5px solid rgba(150, 150, 150, 0.12) !important;
+            padding: 6px !important;
+            border-radius: 16px !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+            background: var(--input-bg);
+        }
+        .tab-btn, .survey-tab, .eg-tab, .zh-tab {
+            border-radius: 12px !important;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+            border: none !important;
+        }
+        .tab-btn.active, .survey-tab.active, .eg-tab.active, .zh-tab.active {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+            background: var(--bg-panel) !important;
+        }
+        .zh-tab::after, .survey-tab::after, .home-tab::after {
+            display: none !important; /* 隐藏掉原来生硬的下划线 */
+        }
+
+        /* 5. APP 头部的返回键和功能按键增加点击反馈底色 */
+        .chat-header i, .settings-header i, .moments-header i, .album-header i, .shop-header i {
+            padding: 6px !important;
+            border-radius: 10px !important;
+            transition: background 0.2s, transform 0.2s !important;
+        }
+        .chat-header i:active, .settings-header i:active, .moments-header i:active, .album-header i:active, .shop-header i:active {
+            background: rgba(150, 150, 150, 0.15) !important;
+            transform: scale(0.85) !important;
+        }
+
+        /* ========================================== */
+/* 💑 情侣空间 App 专属样式 */
+/* ========================================== */
+#couple-app { background: var(--bg-base); min-height: 100vh; }
+.couple-header { padding: 60px 20px 10px; background: var(--bg-glass-header); z-index: 10; position: sticky; top: 0; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;}
+.cp-tabs { display: flex; margin: 15px 20px; background: var(--input-bg); border-radius: 12px; padding: 4px; border: 0.5px solid var(--border-color); }
+.cp-tab { flex: 1; padding: 10px 0; text-align: center; font-size: 14px; font-weight: 500; color: var(--text-sub); border-radius: 8px; transition: all 0.2s; cursor: pointer; }
+.cp-tab.active { background: #ff4d6d; color: #fff; box-shadow: 0 2px 6px rgba(255,77,109,0.3); }
+.cp-panel { display: none; padding: 0 20px 80px; flex-direction: column; gap: 15px; }
+.cp-panel.active { display: flex; }
+
+/* 绑定列表 */
+.cp-bind-card { background: var(--bg-panel); border-radius: 16px; padding: 15px; border: 0.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+.cp-bind-info { display: flex; align-items: center; gap: 12px; }
+.cp-bind-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,77,109,0.3); }
+.cp-bind-btn { padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.cp-bind-btn.bind { background: rgba(255,77,109,0.1); color: #ff4d6d; border: 1px solid #ff4d6d; }
+.cp-bind-btn.unbind { background: var(--input-bg); color: var(--text-sub); }
+
+/* 交换日记 */
+.cp-diary-card { background: var(--bg-panel); border-radius: 16px; padding: 16px; border: 1px dashed #ff4d6d; position: relative; }
+.cp-diary-tag { position: absolute; top: 12px; right: 12px; font-size: 10px; background: rgba(255,77,109,0.1); color: #ff4d6d; padding: 2px 6px; border-radius: 4px; }
+.cp-diary-text { font-size: 14px; color: var(--text-main); line-height: 1.6; white-space: pre-wrap; margin: 10px 0; }
+.cp-diary-reply { background: rgba(255,77,109,0.05); border-left: 3px solid #ff4d6d; padding: 10px; border-radius: 0 8px 8px 0; font-size: 13px; color: var(--text-main); line-height: 1.5; margin-top: 10px; }
+
+/* 密码查岗 */
+.cp-pwd-box { background: linear-gradient(135deg, rgba(255,77,109,0.1) 0%, rgba(255,143,113,0.05) 100%); border: 1px solid rgba(255,77,109,0.3); border-radius: 20px; padding: 20px; text-align: center; }
+.cp-heart-beat { font-size: 50px; color: #ff4d6d; animation: pulse 1.5s infinite; margin-bottom: 10px; }
+
+
+
+
+
+
+
+
+
+
 
 
        
@@ -4527,7 +4829,6 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
                     <div class="app-container" onclick="changeHomeWallpaper()" data-drag-id="sys-wallpaper"><div class="app-icon" style="background: linear-gradient(135deg, rgba(230, 215, 220, 0.4) 0%, rgba(205, 190, 200, 0.1) 100%);"><i class="fas fa-image"></i></div><div class="app-label">换壁纸</div></div>
                     <div class="app-container" onclick="openApp('beautify-app')" data-drag-id="sys-beauty"><div class="app-icon" style="background: linear-gradient(135deg, rgba(200, 220, 230, 0.4) 0%, rgba(180, 200, 210, 0.1) 100%);"><i class="fas fa-paint-brush"></i></div><div class="app-label">美化中心</div></div>
                     <div class="app-container" onclick="openApp('theme-app')" data-drag-id="sys-theme"><div class="app-icon" style="background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);"><i class="fas fa-paint-roller" style="color: rgba(255,255,255,0.95);"></i></div><div class="app-label">主题布局</div></div>
-                    <div class="app-container" onclick="openApp('moments-app')" data-drag-id="sys-moments"><div class="app-icon" style="background: linear-gradient(135deg, rgba(74, 222, 128, 0.4) 0%, rgba(34, 197, 94, 0.1) 100%);"><i class="fas fa-camera-retro" style="color: rgba(255,255,255,0.95);"></i></div><div class="app-label">朋友圈</div></div>
                     
                     <div class="app-container" onclick="openApp('music-app')" data-drag-id="sys-music"><div class="app-icon" style="background: linear-gradient(135deg, rgba(210, 200, 210, 0.4) 0%, rgba(185, 175, 185, 0.1) 100%);"><i class="fas fa-music"></i></div><div class="app-label">音乐</div></div>
                     <div class="app-container" onclick="openAlbumApp()" data-drag-id="sys-album"><div class="app-icon" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); box-shadow: 0 4px 15px rgba(0,0,0,0.1);"><i class="fas fa-images" style="color: #f39c12;"></i></div><div class="app-label">共享相册</div></div>
@@ -4650,6 +4951,8 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
                     <div class="app-container" onclick="openApp('worldbook-app')" data-drag-id="sys-wb"><div class="app-icon" style="background: linear-gradient(135deg, rgba(215, 210, 220, 0.4) 0%, rgba(185, 180, 195, 0.1) 100%);"><i class="fas fa-book-open"></i></div><div class="app-label">世界书</div></div>
                     <div class="app-container" onclick="openApp('wardrobe-app')" data-drag-id="sys-wardrobe"><div class="app-icon" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);"><i class="fas fa-tshirt" style="color: rgba(255,255,255,0.95);"></i></div><div class="app-label">衣橱</div></div>
                     <div class="app-container" onclick="openApp('home-app')" data-drag-id="sys-home"><div class="app-icon" style="background: linear-gradient(135deg, rgba(255, 200, 150, 0.4) 0%, rgba(255, 150, 100, 0.1) 100%);"><i class="fas fa-home" style="color: rgba(255,255,255,0.95);"></i></div><div class="app-label">家庭空间</div></div>
+                    <div class="app-container" onclick="openApp('data-manager-app')" data-drag-id="sys-data-manager"><div class="app-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); box-shadow: 0 4px 15px rgba(0,0,0,0.1);"><i class="fas fa-database" style="color: rgba(255,255,255,0.95);"></i></div><div class="app-label">数据管理</div></div>
+
                     <div class="app-container" onclick="openApp('memory-app')" data-drag-id="sys-memory">
     <div class="app-icon" style="background: linear-gradient(135deg, rgba(230, 215, 220, 0.4) 0%, rgba(205, 190, 200, 0.1) 100%);">
         <i class="fas fa-brain" style="color: rgba(255,255,255,0.95);"></i>
@@ -4694,9 +4997,10 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
             <!-- 底部 Dock 栏必须移出滑动区，固定在底部 -->
             <div class="dock glass-effect">
                 <div class="app-container" onclick="openApp('chat-app')"><div class="app-icon" style="background: linear-gradient(135deg, rgba(220, 210, 215, 0.4) 0%, rgba(195, 185, 195, 0.1) 100%);"><i class="fas fa-comment"></i></div></div>
-                <div class="app-container" onclick="openApp('contacts-app')"><div class="app-icon" style="background: linear-gradient(135deg, rgba(205, 195, 205, 0.4) 0%, rgba(180, 170, 180, 0.1) 100%);"><i class="fas fa-address-book"></i></div></div>
                 <div class="app-container" onclick="openApp('persona-app')"><div class="app-icon" style="background: linear-gradient(135deg, rgba(225, 205, 215, 0.4) 0%, rgba(200, 185, 195, 0.1) 100%);"><i class="fas fa-id-card"></i></div></div>
                 <div class="app-container" onclick="openApp('settings-app')"><div class="app-icon" style="background: linear-gradient(135deg, rgba(200, 195, 200, 0.4) 0%, rgba(175, 170, 180, 0.1) 100%);"><i class="fas fa-user-cog"></i></div></div>
+                <div class="app-container" onclick="openApp('couple-app')" data-drag-id="sys-couple"><div class="app-icon" style="background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%); box-shadow: 0 4px 15px rgba(255,117,140,0.3);"><i class="fas fa-heart" style="color: #fff;"></i></div><div class="app-label" style="color: #ff4d6d; font-weight: bold;"></div></div>
+
             </div>
 
                                                 <!-- 小宠物 App 界面 (拓麻歌子风格) -->
@@ -4852,241 +5156,254 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
 
 
 
-            <div id="contacts-app" class="app-view scrollable">
-               <div class="contacts-header glass-effect">
-    <i class="fas fa-chevron-left" onclick="goBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
-    通讯录
-</div>
+            
 
-                <div class="my-card" onclick="openProfileModal()">
-                    <div class="my-avatar" id="my-avatar-display"></div>
-                    <div class="my-info">
-                        <h4 id="my-name-display">我</h4>
-                        <p>点击修改个人资料</p>
-                    </div>
-                </div>
-                <div class="contact-list" id="contact-list"></div>
-            </div>
-
-            <div id="chat-app" class="app-view">
-                <div class="chat-header glass-effect">
-                    <div class="chat-header-left">
-    <!-- ⚠️注意：把原来的 goBack() 换成我们新写的 handleChatBack()，防止小窗模式下返回出错 -->
-    <i class="fas fa-chevron-left" onclick="handleChatBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; margin-bottom: 2px; cursor:pointer;" title="返回上一页"></i>
-    <div class="chat-info">
-        <h3 id="chat-name-display" onmousedown="nameTouchStart(event)" onmouseup="nameTouchEnd(event)" ontouchstart="nameTouchStart(event)" ontouchend="nameTouchEnd(event)" title="点击查看状态，长按修改备注" style="cursor: pointer; user-select: none;">AI <i class="fas fa-id-badge" style="font-size: 14px; color: var(--accent); margin-left: 5px; pointer-events: none;"></i></h3>
-        <p id="chat-status" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--accent);">在线</p>
-                <!-- 👇 替换这里的三个小交互键 👇 -->
-<div style="display: flex; gap: 15px; justify-content: center; margin-top: 4px;">
-    <i class="fas fa-tv" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起看视频" onclick="openChatVideo()"></i>
-    <!-- 修改这里：绑定了打开小游戏面板的函数 -->
-    <i class="fas fa-gamepad" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起玩游戏" onclick="openChatGame()"></i>
-    <i class="fas fa-cog" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="交互3"></i>
-</div>
-<!-- 👆 替换结束 👆 -->
-
-
+<div id="contacts-app" class="app-view scrollable">
+    <div class="contacts-header glass-effect">
+        <i class="fas fa-chevron-left" onclick="goBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
+        通讯录
     </div>
-</div>
-<div style="display:flex; gap: 15px; align-items:center; margin-bottom: 4px;">
-    <!-- 原来的电话图标 -->
-    <i class="fas fa-phone-alt" style="color:var(--accent); font-size: 18px; cursor: pointer;"></i>
-    <!-- 👇新增的：小窗浮窗图标 (仿WeChat的窗口或列表图标) -->
-    <i class="fas fa-window-restore chat-pip-btn" style="color:var(--accent); font-size: 18px; cursor: pointer;" onclick="toggleChatPiP()" title="小窗模式"></i>
-</div>
 
-                </div>
-                
-                <div class="chat-body scrollable" id="chat-container"></div>
-                <div class="typing-indicator" id="typing-indicator">对方正在输入...</div>
-
-                                                                          <div class="chat-input-area glass-effect">
-                    <div class="quote-status-bar" id="quote-bar">
-                        <span id="quote-text-preview">正在引用消息...</span>
-                        <i class="fas fa-times-circle" style="cursor:pointer; font-size:16px;" onclick="cancelQuote()"></i>
-                    </div>
-                    
-                    <div id="sticker-panel" style="display: none; position: absolute; bottom: 100%; left: 0; right: 0; background: var(--bg-glass); border-top: 0.5px solid var(--border-color); padding: 15px; z-index: 5; max-height: 220px; overflow-y: auto; grid-template-columns: repeat(4, 1fr); gap: 12px; backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);"></div>
-                    
-                    <div id="tools-panel" style="display: none; position: absolute; bottom: 100%; left: 0; right: 0; background: var(--bg-glass); border-top: 0.5px solid var(--border-color); padding: 20px 25px; z-index: 5; grid-template-columns: repeat(4, 1fr); gap: 15px; backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);">
-                        <div class="tool-item" onclick="document.getElementById('chat-image-upload-input').click(); closeAllChatPanels();">
-    <div class="tool-icon-wrap"><i class="fas fa-image" style="color: #9b59b6;"></i></div>
-    <span>发图片</span>
-</div>
-
-                        <div class="tool-item" onclick="document.getElementById('chat-file-upload-input').click(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-folder-open" style="color: #4a90e2;"></i></div>
-                            <span>发文件</span>
-                        </div>
-                        <div class="tool-item" onclick="sendTransfer(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-yen-sign" style="color: #f39c12;"></i></div>
-                            <span>转账</span>
-                        </div>
-                        <div class="tool-item" onclick="toggleBlockChar(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-ban" id="tool-icon-block" style="color: #e67e22;"></i></div>
-                            <span id="tool-text-block">拉黑TA</span>
-                        </div>
-                        <div class="tool-item" onclick="deleteCharFriend(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-user-times" style="color: #e74c3c;"></i></div>
-                            <span>删除好友</span>
-                        </div>
-                        <div class="tool-item" onclick="clearChatHistory(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-trash-alt" style="color: #e74c3c;"></i></div>
-                            <span>清空对话</span>
-                        </div>
-                        <div class="tool-item" onclick="peekCharState(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-eye" style="color: #34495e;"></i></div>
-                            <span>瞅瞅TA</span>
-                        </div>
-                        <div class="tool-item" onclick="startVoiceCall(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-phone-alt" style="color: #2ecc71;"></i></div>
-                            <span>语音通话</span>
-                        </div>
-                        <div class="tool-item" onclick="toggleMultiSelectMode(); closeAllChatPanels();">
-                            <div class="tool-icon-wrap"><i class="fas fa-check-square" style="color: #95a5a6;"></i></div>
-                            <span>批量删除</span>
-                        </div>
-                    </div>
-
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="chat-icon-btn ai-reply-btn" style="font-size: 26px; width: 1em; height: 1em; margin-right: 8px; color: var(--text-main); flex-shrink: 0;" onclick="triggerAIResponse()" title="让 AI 回复">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M8.5 12h.01" stroke-width="2.5"></path>
-                        <path d="M11 9.5a3.5 3.5 0 0 1 0 5"></path>
-                        <path d="M13.5 7a7 7 0 0 1 0 10"></path>
-                    </svg>
-
-                    <input type="text" class="chat-input" id="user-input" placeholder="输入聊天内容... (发送 $开启 描写)" onkeydown="handleEnter(event)" onfocus="closeAllChatPanels(); scrollToBottom();">
-
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="chat-icon-btn" style="font-size: 26px; width: 1em; height: 1em; margin-left: 10px; color: var(--text-sub); flex-shrink: 0;" onclick="toggleStickerPanel()" title="表情包">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M8 8.5v1" stroke-width="2.5"></path>
-                        <path d="M16 8.5v1" stroke-width="2.5"></path>
-                        <path d="M7 14h10a5 5 0 0 1-10 0z"></path>
-                    </svg>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="chat-icon-btn tools-plus-btn" style="font-size: 26px; width: 1em; height: 1em; margin-left: 10px; color: var(--text-sub); flex-shrink: 0;" onclick="toggleToolsPanel()" title="更多功能">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="16"></line>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
-
-                    <i class="fas fa-arrow-circle-up" style="color: var(--text-sub); font-size: 28px; cursor: pointer; flex-shrink: 0; margin-left: 8px;" onclick="sendMessage()" title="仅发送消息"></i>
-                </div>
-
-                <!-- 多选模式下的操作栏 -->
-                <div id="multi-select-bar" class="glass-effect" style="display: none; padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); justify-content: space-between; align-items: center; position: relative; z-index: 10; border-top: 0.5px solid var(--border-color); background: var(--bg-glass-header); flex-shrink: 0;">
-                    <div style="color: var(--text-sub); cursor: pointer; font-size: 16px; padding: 10px;" onclick="cancelMultiSelect()">取消</div>
-                    <div style="color: #ff453a; cursor: pointer; font-weight: bold; font-size: 16px; padding: 10px;" onclick="confirmMultiDelete()">删除已选</div>
-                </div>
-                <!-- 👇 新增：聊天室悬浮视频播放器 👇 -->
-<div id="chat-video-player" class="glass-effect" style="display: none; position: absolute; top: 120px; right: 15px; width: 280px; border-radius: 16px; z-index: 8000; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2); border: 0.5px solid var(--border-color);">
-    <!-- 拖拽头 -->
-    <div id="cvp-header" style="height: 35px; background: rgba(0,0,0,0.4); display: flex; justify-content: space-between; align-items: center; padding: 0 12px; cursor: move; touch-action: none;">
-        <span style="font-size: 12px; color: #fff; font-weight: bold; letter-spacing: 1px;"><i class="fas fa-tv" style="color:var(--accent);"></i> 共享荧幕</span>
-        <i class="fas fa-times-circle" style="color: #ff453a; font-size: 16px; cursor: pointer;" onclick="closeChatVideo()"></i>
-    </div>
-    <!-- 视频容器 -->
-    <div id="cvp-content" style="width: 100%; aspect-ratio: 16/9; background: #000; position: relative; display: flex; justify-content: center; align-items: center;">
-        <!-- 初始输入态 -->
-        <div id="cvp-setup" style="text-align: center; width: 100%;">
-            <i class="fas fa-video" style="color:var(--text-sub); font-size: 30px; margin-bottom: 10px;"></i>
-            <div style="display: flex; gap: 10px; justify-content: center; padding: 0 15px;">
-                <div class="save-btn" style="flex: 1; padding: 8px 0; font-size: 12px; margin:0; border-radius: 8px;" onclick="document.getElementById('chat-video-upload').click()">本地视频</div>
-                <div class="save-btn" style="flex: 1; padding: 8px 0; font-size: 12px; margin:0; border-radius: 8px; background: rgba(255,255,255,0.15); color: var(--text-main);" onclick="setupChatVideo()">网络直链</div>
-            </div>
-            <!-- 隐藏的本地视频上传口 -->
-            <input type="file" id="chat-video-upload" accept="video/*" style="display:none;" onchange="handleLocalVideoUpload(event)">
+    <div class="my-card" onclick="openProfileModal()">
+        <div class="my-avatar" id="my-avatar-display"></div>
+        <div class="my-info">
+            <h4 id="my-name-display">我</h4>
+            <p>点击修改个人资料</p>
         </div>
-        <!-- 播放器挂载点 -->
-        <div id="cvp-frame-container" style="width: 100%; height: 100%; display: none;"></div>
     </div>
+    <div class="contact-list" id="contact-list"></div>
 </div>
-<!-- 👆 新增结束 👆 -->
 
-<!-- 👇 新增：聊天室悬浮小游戏面板 👇 -->
-<div id="chat-game-player" class="glass-effect" style="display: none; position: absolute; top: 120px; left: 15px; width: 280px; border-radius: 16px; z-index: 8000; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2); border: 0.5px solid var(--border-color);">
-    <!-- 拖拽把手 -->
-    <div id="cgp-header" style="height: 35px; background: rgba(0,0,0,0.4); display: flex; justify-content: space-between; align-items: center; padding: 0 12px; cursor: move; touch-action: none;">
-        <span style="font-size: 12px; color: #fff; font-weight: bold; letter-spacing: 1px;"><i class="fas fa-gamepad" style="color:var(--accent);"></i> 游戏中心</span>
-        <i class="fas fa-times-circle" style="color: #ff453a; font-size: 16px; cursor: pointer;" onclick="closeChatGame()"></i>
-    </div>
+<!-- 注意：移除了原本在这里的全局 cover 属性，改为面板独立控制背景 -->
+<div id="chat-app" class="app-view" style="padding-bottom: 75px; background: var(--screen-bg);">
     
-    <!-- 游戏导航栏 -->
-    <div style="display: flex; background: rgba(0,0,0,0.2); padding: 5px; font-size: 11px;">
-        <div class="cgp-tab active" onclick="switchGameTab('gomoku', this)">五子棋</div>
-        <div class="cgp-tab" onclick="switchGameTab('chess', this)">象棋</div>
-        <div class="cgp-tab" onclick="switchGameTab('dice', this)">猜骰子</div>
-        <div class="cgp-tab" onclick="switchGameTab('custom', this)">自定义</div>
+    <!-- ================= 1. 聊天对话面板 (独占自定义壁纸) ================= -->
+    <div id="chat-panel-msg" class="chat-main-panel active" style="display:flex; flex-direction:column; height:100%; width:100%; background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <div class="chat-header glass-effect">
+            <div class="chat-header-left">
+                <i class="fas fa-chevron-left" onclick="handleChatBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; margin-bottom: 2px; cursor:pointer;" title="返回上一页"></i>
+                
+                <!-- 👇 包含用户和角色的双头像 DOM 👇 -->
+                <div class="chat-header-avatars" style="display: flex; align-items: center; margin-right: 12px;">
+                    <div id="chat-header-user-avatar" style="width: 36px; height: 36px; border-radius: 50%; background-size: cover; background-position: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1.5px solid var(--bg-panel); z-index: 2;"></div>
+                    <div id="chat-header-avatar" style="width: 36px; height: 36px; border-radius: 50%; background-size: cover; background-position: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1.5px solid var(--bg-panel); margin-left: -12px; z-index: 1;"></div>
+                </div>
+                <!-- 👆 替换结束 👆 -->
+                
+                <div class="chat-info">
+                    <h3 id="chat-name-display" onmousedown="nameTouchStart(event)" onmouseup="nameTouchEnd(event)" ontouchstart="nameTouchStart(event)" ontouchend="nameTouchEnd(event)" title="点击查看状态，长按修改备注" style="cursor: pointer; user-select: none;">AI <i class="fas fa-id-badge" style="font-size: 14px; color: var(--accent); margin-left: 5px; pointer-events: none;"></i></h3>
+                    <p id="chat-status" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--accent);">在线</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 4px;">
+                        <i class="fas fa-tv" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起看视频" onclick="openChatVideo()"></i>
+                        <i class="fas fa-gamepad" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起玩游戏" onclick="openChatGame()"></i>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap: 15px; align-items:center; margin-bottom: 4px;">
+                <i class="fas fa-phone-alt" style="color:var(--accent); font-size: 18px; cursor: pointer;"></i>
+                <i class="fas fa-window-restore chat-pip-btn" style="color:var(--accent); font-size: 18px; cursor: pointer;" onclick="toggleChatPiP()" title="小窗模式"></i>
+            </div>
+        </div>
+        
+        <div class="chat-body scrollable" id="chat-container"></div>
+        <div class="typing-indicator" id="typing-indicator">对方正在输入...</div>
+
+        <div class="chat-input-area glass-effect" style="padding-bottom: 15px;">
+            <div class="quote-status-bar" id="quote-bar">
+                <span id="quote-text-preview">正在引用消息...</span>
+                <i class="fas fa-times-circle" style="cursor:pointer; font-size:16px;" onclick="cancelQuote()"></i>
+            </div>
+            
+            <div id="sticker-panel" style="display: none; position: absolute; bottom: 100%; left: 0; right: 0; background: var(--bg-glass); border-top: 0.5px solid var(--border-color); padding: 15px; z-index: 5; max-height: 220px; overflow-y: auto; grid-template-columns: repeat(4, 1fr); gap: 12px; backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);"></div>
+            
+            <div id="tools-panel" style="display: none; position: absolute; bottom: 100%; left: 0; right: 0; background: var(--bg-glass); border-top: 0.5px solid var(--border-color); padding: 20px 25px; z-index: 5; grid-template-columns: repeat(4, 1fr); gap: 15px; backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);">
+                <div class="tool-item" onclick="document.getElementById('chat-image-upload-input').click(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-image" style="color: #9b59b6;"></i></div><span>发图片</span></div>
+                <div class="tool-item" onclick="document.getElementById('chat-file-upload-input').click(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-folder-open" style="color: #4a90e2;"></i></div><span>发文件</span></div>
+                <div class="tool-item" onclick="sendTransfer(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-yen-sign" style="color: #f39c12;"></i></div><span>转账</span></div>
+                <div class="tool-item" onclick="toggleBlockChar(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-ban" id="tool-icon-block" style="color: #e67e22;"></i></div><span id="tool-text-block">拉黑TA</span></div>
+                <div class="tool-item" onclick="deleteCharFriend(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-user-times" style="color: #e74c3c;"></i></div><span>删除好友</span></div>
+                <div class="tool-item" onclick="clearChatHistory(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-trash-alt" style="color: #e74c3c;"></i></div><span>清空对话</span></div>
+                <div class="tool-item" onclick="peekCharState(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-eye" style="color: #34495e;"></i></div><span>瞅瞅TA</span></div>
+                <div class="tool-item" onclick="startVoiceCall(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-phone-alt" style="color: #2ecc71;"></i></div><span>语音通话</span></div>
+                <div class="tool-item" onclick="toggleMultiSelectMode(); closeAllChatPanels();"><div class="tool-icon-wrap"><i class="fas fa-check-square" style="color: #95a5a6;"></i></div><span>批量删除</span></div>
+            </div>
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="chat-icon-btn ai-reply-btn" style="font-size: 26px; width: 1em; height: 1em; margin-right: 8px; color: var(--text-main); flex-shrink: 0;" onclick="triggerAIResponse()" title="让 AI 回复">
+                <circle cx="12" cy="12" r="10"></circle><path d="M8.5 12h.01" stroke-width="2.5"></path><path d="M11 9.5a3.5 3.5 0 0 1 0 5"></path><path d="M13.5 7a7 7 0 0 1 0 10"></path>
+            </svg>
+
+            <input type="text" class="chat-input" id="user-input" placeholder="Message..." onkeydown="handleEnter(event)" onfocus="closeAllChatPanels(); scrollToBottom();">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="chat-icon-btn" style="font-size: 26px; width: 1em; height: 1em; margin-left: 10px; color: var(--text-sub); flex-shrink: 0;" onclick="toggleStickerPanel()" title="表情包">
+                <circle cx="12" cy="12" r="10"></circle><path d="M8 8.5v1" stroke-width="2.5"></path><path d="M16 8.5v1" stroke-width="2.5"></path><path d="M7 14h10a5 5 0 0 1-10 0z"></path>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="chat-icon-btn tools-plus-btn" style="font-size: 26px; width: 1em; height: 1em; margin-left: 10px; color: var(--text-sub); flex-shrink: 0;" onclick="toggleToolsPanel()" title="更多功能">
+                <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+
+            <i class="fas fa-arrow-circle-up" style="color: var(--text-sub); font-size: 28px; cursor: pointer; flex-shrink: 0; margin-left: 8px;" onclick="sendMessage()" title="仅发送消息"></i>
+        </div>
+
+                <div id="multi-select-bar" class="glass-effect" style="display: none; padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); justify-content: space-between; align-items: center; position: relative; z-index: 10; border-top: 0.5px solid var(--border-color); background: var(--bg-glass-header); flex-shrink: 0;">
+            <div style="color: var(--text-sub); cursor: pointer; font-size: 16px; padding: 10px;" onclick="cancelMultiSelect()">取消</div>
+            <div style="color: #ff453a; cursor: pointer; font-weight: bold; font-size: 16px; padding: 10px;" onclick="confirmMultiDelete()">删除已选</div>
+        </div>
+
+        <!-- 👇 移植回来的悬浮视频与游戏面板 👇 -->
+        <div id="chat-video-player" class="glass-effect" style="display: none; position: absolute; top: 120px; right: 15px; width: 280px; border-radius: 16px; z-index: 8000; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2); border: 0.5px solid var(--border-color);">
+            <div id="cvp-header" style="height: 35px; background: rgba(0,0,0,0.4); display: flex; justify-content: space-between; align-items: center; padding: 0 12px; cursor: move; touch-action: none;">
+                <span style="font-size: 12px; color: #fff; font-weight: bold; letter-spacing: 1px;"><i class="fas fa-tv" style="color:var(--accent);"></i> 共享荧幕</span>
+                <i class="fas fa-times-circle" style="color: #ff453a; font-size: 16px; cursor: pointer;" onclick="closeChatVideo()"></i>
+            </div>
+            <div id="cvp-content" style="width: 100%; aspect-ratio: 16/9; background: #000; position: relative; display: flex; justify-content: center; align-items: center;">
+                <div id="cvp-setup" style="text-align: center; width: 100%;">
+                    <i class="fas fa-video" style="color:var(--text-sub); font-size: 30px; margin-bottom: 10px;"></i>
+                    <div style="display: flex; gap: 10px; justify-content: center; padding: 0 15px;">
+                        <div class="save-btn" style="flex: 1; padding: 8px 0; font-size: 12px; margin:0; border-radius: 8px;" onclick="document.getElementById('chat-video-upload').click()">本地视频</div>
+                        <div class="save-btn" style="flex: 1; padding: 8px 0; font-size: 12px; margin:0; border-radius: 8px; background: rgba(255,255,255,0.15); color: var(--text-main);" onclick="setupChatVideo()">网络直链</div>
+                    </div>
+                    <input type="file" id="chat-video-upload" accept="video/*" style="display:none;" onchange="handleLocalVideoUpload(event)">
+                </div>
+                <div id="cvp-frame-container" style="width: 100%; height: 100%; display: none;"></div>
+            </div>
+        </div>
+
+        <div id="chat-game-player" class="glass-effect" style="display: none; position: absolute; top: 120px; left: 15px; width: 280px; border-radius: 16px; z-index: 8000; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2); border: 0.5px solid var(--border-color);">
+            <div id="cgp-header" style="height: 35px; background: rgba(0,0,0,0.4); display: flex; justify-content: space-between; align-items: center; padding: 0 12px; cursor: move; touch-action: none;">
+                <span style="font-size: 12px; color: #fff; font-weight: bold; letter-spacing: 1px;"><i class="fas fa-gamepad" style="color:var(--accent);"></i> 游戏中心</span>
+                <i class="fas fa-times-circle" style="color: #ff453a; font-size: 16px; cursor: pointer;" onclick="closeChatGame()"></i>
+            </div>
+            
+            <div style="display: flex; background: rgba(0,0,0,0.2); padding: 5px; font-size: 11px;">
+                <div class="cgp-tab active" onclick="switchGameTab('gomoku', this)">五子棋</div>
+                <div class="cgp-tab" onclick="switchGameTab('chess', this)">象棋</div>
+                <div class="cgp-tab" onclick="switchGameTab('dice', this)">猜骰子</div>
+                <div class="cgp-tab" onclick="switchGameTab('custom', this)">自定义</div>
+            </div>
+
+            <div id="cgp-content" style="width: 100%; aspect-ratio: 1; background: var(--bg-panel); position: relative; padding: 10px;">
+                <div id="game-gomoku" class="cgp-panel active" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <span style="font-size: 11px; color: var(--text-sub);">你是黑子，TA是白子</span>
+                        <div class="save-btn" style="margin: 0; padding: 4px 10px; font-size: 10px; border-radius: 8px;" onclick="guessFistForGame()">✊ 猜拳执子</div>
+                    </div>
+                    <div id="gomoku-board" style="flex: 1; background: #dcb35c; display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); border: 2px solid #5c4009; cursor: crosshair;"></div>
+                    <div style="display:flex; gap:10px; margin-top:5px;">
+                        <div class="del-btn" style="flex:1; margin:0; padding:4px; font-size:11px;" onclick="initGomoku()">重新开局</div>
+                    </div>
+                </div>
+
+                <div id="game-chess" class="cgp-panel" style="display: none; width: 100%; height: 100%; flex-direction: column;">
+                    <div style="font-size: 10px; color: var(--text-sub); text-align: center; margin-bottom: 5px;">点击棋子再点空地移动（不作规则强校验）</div>
+                    <div id="chess-board" style="flex: 1; background: #e0c89f; display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(10, 1fr); border: 1px solid #8b5a2b; position: relative;">
+                        <div style="position:absolute; top: 40%; height: 10%; width: 100%; display:flex; justify-content:space-around; align-items:center; font-weight:bold; color:#8b5a2b; pointer-events:none; border-top:1px solid #8b5a2b; border-bottom:1px solid #8b5a2b;">楚河<span>汉界</span></div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:5px;">
+                        <div class="del-btn" style="flex:1; margin:0; padding:4px; font-size:11px;" onclick="initChess()">重新摆盘</div>
+                    </div>
+                </div>
+
+                <div id="game-dice" class="cgp-panel" style="display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+                    <div style="font-size: 13px; color: var(--text-main);">点击摇出点数并发送给TA比大小</div>
+                    <div id="dice-result" style="font-size: 60px; font-weight: bold; color: var(--accent); text-shadow: 0 4px 10px rgba(0,0,0,0.2);">🎲</div>
+                    <div class="save-btn" style="width: 80%; padding: 12px; margin: 0; background: var(--accent); color: #000; font-weight: bold; border-radius: 12px;" onclick="playDiceGame()"><i class="fas fa-dice"></i> 开始摇色子</div>
+                </div>
+
+                <div id="game-custom" class="cgp-panel" style="display: none; width: 100%; height: 100%; flex-direction: column;">
+                    <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 5px;">上传一张图片作为棋盘或卡牌：</div>
+                    <div id="custom-game-bg" style="flex: 1; border: 1px dashed var(--accent); border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; background-size: contain; background-position: center; background-repeat: no-repeat;" onclick="document.getElementById('custom-game-upload').click()">
+                        <span style="color:var(--text-sub); font-size: 12px;"><i class="fas fa-plus"></i> 上传自定义底图</span>
+                    </div>
+                    <textarea id="custom-game-rule" class="setting-textarea" style="height: 60px; font-size: 11px; margin-top: 10px;" placeholder="在这写下游戏规则发给AI..."></textarea>
+                    <div class="save-btn" style="margin-top: 8px; padding: 8px; font-size: 12px; border-radius: 8px;" onclick="sendCustomGame()"><i class="fas fa-paper-plane"></i> 把规则丢给TA</div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+        .cgp-tab { flex: 1; text-align: center; color: var(--text-sub); cursor: pointer; transition: 0.2s; padding: 4px 0; border-radius: 4px; }
+        .cgp-tab.active { background: var(--accent); color: #000; font-weight: bold; }
+        .gomoku-cell { border: 0.5px solid #ab7a28; display: flex; justify-content: center; align-items: center; position: relative; }
+        .gomoku-piece { width: 80%; height: 80%; border-radius: 50%; box-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
+        .gomoku-piece.black { background: radial-gradient(circle at 30% 30%, #555, #000); }
+        .gomoku-piece.white { background: radial-gradient(circle at 30% 30%, #fff, #ccc); }
+        .chess-cell { border: 0.5px solid rgba(139, 90, 43, 0.3); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 2; position: relative;}
+        .chess-piece { width: 22px; height: 22px; border-radius: 50%; background: #eed5a3; box-shadow: inset 0 0 5px rgba(0,0,0,0.3), 1px 1px 3px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; font-family: '楷体', serif; border: 1px solid #8b5a2b; pointer-events: none; }
+        .chess-cell.selected { background: rgba(46, 204, 113, 0.4); }
+        </style>
     </div>
 
-    <!-- 游戏内容区 -->
-    <div id="cgp-content" style="width: 100%; aspect-ratio: 1; background: var(--bg-panel); position: relative; padding: 10px;">
-        
-        <!-- 1. 五子棋面板 -->
-        <div id="game-gomoku" class="cgp-panel active" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <span style="font-size: 11px; color: var(--text-sub);">你是黑子，TA是白子</span>
-                <div class="save-btn" style="margin: 0; padding: 4px 10px; font-size: 10px; border-radius: 8px;" onclick="guessFistForGame()">✊ 猜拳执子</div>
+
+    <!-- ================= 2. 通讯录面板 (使用基于主题色的动态渐变背景) ================= -->
+    <div id="chat-panel-contacts" class="chat-main-panel" style="display:none; flex-direction:column; height:100%; width:100%; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent) 0%, var(--screen-bg) 60%);">
+        <!-- 1. 增加返回键，并连通角色工坊 App -->
+        <div class="chat-header glass-effect" style="justify-content: space-between; padding-left: 20px; padding-right: 20px;">
+            <i class="fas fa-chevron-left" onclick="goBack()" style="color:var(--accent); font-size: 20px; cursor:pointer;" title="返回桌面"></i>
+            <span style="font-size: 20px; font-weight: bold; color: var(--text-main); letter-spacing: 0.5px;">Contacts</span>
+            <i class="fas fa-user-cog" onclick="openApp('settings-app')" style="color:var(--accent); font-size: 20px; cursor:pointer;" title="角色工坊"></i>
+        </div>
+        <div class="scrollable" style="flex:1;">
+            <!-- 2. 连通我的设定 APP，修复 ID 冲突确保数据绑定不出错 -->
+            <div class="my-card glass-effect" onclick="openApp('persona-app')">
+                <div class="my-avatar" id="chat-my-avatar-display"></div>
+                <div class="my-info">
+                    <h4 id="chat-my-name-display">我</h4><p>点击修改我的设定</p>
+                </div>
             </div>
-            <div id="gomoku-board" style="flex: 1; background: #dcb35c; display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); border: 2px solid #5c4009; cursor: crosshair;">
-                <!-- JS 动态生成格子 -->
-            </div>
-            <div style="display:flex; gap:10px; margin-top:5px;">
-                <div class="del-btn" style="flex:1; margin:0; padding:4px; font-size:11px;" onclick="initGomoku()">重新开局</div>
-            </div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-sub); margin: 25px 0 10px 25px; text-transform: uppercase;">All Contacts</div>
+            <!-- 为防ID冲突，将这里的 ID 改为 chat-contact-list -->
+            <div class="contact-list" id="chat-contact-list" style="padding: 0 15px;"></div>
+        </div>
+    </div>
+
+    <!-- ================= 3. 朋友圈 (Moments) 面板 (使用动态渐变背景) ================= -->
+    <div id="chat-panel-moments" class="chat-main-panel" style="display:none; flex-direction:column; height:100%; width:100%; position:relative; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent) 0%, var(--screen-bg) 60%);">
+        <!-- 3. 增加返回键 -->
+        <div class="moments-header" id="moments-header">
+            <i class="fas fa-chevron-left" onclick="goBack()" style="cursor:pointer; font-size: 20px; text-shadow: 0 1px 4px rgba(0,0,0,0.8);"></i>
+            <span class="mh-title" id="mh-title" style="opacity: 0; transition: opacity 0.3s; font-size: 20px;">Moments</span>
+            <!-- 原右上角相机图标隐藏，仅作为占位符维持 flex-between 左右平衡 -->
+            <i class="fas fa-camera" style="visibility: hidden; font-size: 22px;"></i>
         </div>
 
-        <!-- 2. 象棋面板 -->
-        <div id="game-chess" class="cgp-panel" style="display: none; width: 100%; height: 100%; flex-direction: column;">
-            <div style="font-size: 10px; color: var(--text-sub); text-align: center; margin-bottom: 5px;">点击棋子再点空地移动（不作规则强校验）</div>
-            <div id="chess-board" style="flex: 1; background: #e0c89f; display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(10, 1fr); border: 1px solid #8b5a2b; position: relative;">
-                <!-- 楚河汉界背景线 -->
-                <div style="position:absolute; top: 40%; height: 10%; width: 100%; display:flex; justify-content:space-around; align-items:center; font-weight:bold; color:#8b5a2b; pointer-events:none; border-top:1px solid #8b5a2b; border-bottom:1px solid #8b5a2b;">楚河<span>汉界</span></div>
-                <!-- JS 动态生成棋子 -->
+        <div class="scrollable" style="flex:1;" id="moments-scroll-area">
+            <div class="moments-cover-container">
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" class="moments-cover" id="moments-cover-img" onclick="document.getElementById('moments-bg-upload').click()">
+                <div class="moments-user-info glass-effect">
+                    <span class="moments-name" id="moments-user-name">我</span>
+                    <img src="" class="moments-avatar" id="moments-user-avatar">
+                </div>
             </div>
-            <div style="display:flex; gap:10px; margin-top:5px;">
-                <div class="del-btn" style="flex:1; margin:0; padding:4px; font-size:11px;" onclick="initChess()">重新摆盘</div>
-            </div>
+            <div class="moments-feed" id="moments-feed" style="padding-bottom: 20px;"></div>
+        </div>
+        <div id="moments-comment-bar" class="moments-comment-bar glass-effect">
+            <input type="text" id="moments-comment-input" placeholder="Comment...">
+            <button onclick="submitMomentComment()">Send</button>
         </div>
 
-        <!-- 3. 猜骰子面板 -->
-        <div id="game-dice" class="cgp-panel" style="display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
-            <div style="font-size: 13px; color: var(--text-main);">点击摇出点数并发送给TA比大小</div>
-            <div id="dice-result" style="font-size: 60px; font-weight: bold; color: var(--accent); text-shadow: 0 4px 10px rgba(0,0,0,0.2);">🎲</div>
-            <div class="save-btn" style="width: 80%; padding: 12px; margin: 0; background: var(--accent); color: #000; font-weight: bold; border-radius: 12px;" onclick="playDiceGame()"><i class="fas fa-dice"></i> 开始摇色子</div>
+        <!-- 👇 新增：现代玻璃拟物风 悬浮操作按钮 (FAB) 👇 -->
+        <div id="moments-fab" class="glass-effect" onclick="promptPostMoment()" style="position: absolute; bottom: 25px; right: 20px; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 10; border: 1px solid rgba(255,255,255,0.15);">
+            <i class="fas fa-camera" style="font-size: 22px; color: var(--accent);"></i>
         </div>
+    </div>
 
-        <!-- 4. 自定义文件面板 -->
-        <div id="game-custom" class="cgp-panel" style="display: none; width: 100%; height: 100%; flex-direction: column;">
-            <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 5px;">上传一张图片作为棋盘或卡牌：</div>
-            <div id="custom-game-bg" style="flex: 1; border: 1px dashed var(--accent); border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; background-size: contain; background-position: center; background-repeat: no-repeat;" onclick="document.getElementById('custom-game-upload').click()">
-                <span style="color:var(--text-sub); font-size: 12px;"><i class="fas fa-plus"></i> 上传自定义底图</span>
-            </div>
-            <input type="file" id="custom-game-upload" accept="image/*" style="display:none;" onchange="handleCustomGameUpload(event)">
-            <textarea id="custom-game-rule" class="setting-textarea" style="height: 60px; font-size: 11px; margin-top: 10px;" placeholder="在这写下游戏规则发给AI（如：这是一张大富翁地图，你掷骰子走，走到红色扣血...）"></textarea>
-            <div class="save-btn" style="margin-top: 8px; padding: 8px; font-size: 12px; border-radius: 8px;" onclick="sendCustomGame()"><i class="fas fa-paper-plane"></i> 把规则丢给TA</div>
+    <!-- ================= 底部统一液态导航栏 ================= -->
+    <div class="chat-bottom-tab-bar glass-effect" id="chat-tab-bar">
+        <div class="chat-tab-btn" onclick="switchChatAppTab('contacts', this)">
+            <i class="fas fa-user-friends"></i><span>Contacts</span>
         </div>
-
+        <div class="chat-tab-btn active" onclick="switchChatAppTab('msg', this)">
+            <i class="fas fa-comment-dots"></i><span>Chats</span>
+        </div>
+        <div class="chat-tab-btn" onclick="switchChatAppTab('moments', this)">
+            <i class="fas fa-camera-retro"></i><span>Moments</span>
+        </div>
     </div>
 </div>
 
-<style>
-/* 小游戏专属追加样式 */
-.cgp-tab { flex: 1; text-align: center; color: var(--text-sub); cursor: pointer; transition: 0.2s; padding: 4px 0; border-radius: 4px; }
-.cgp-tab.active { background: var(--accent); color: #000; font-weight: bold; }
-.gomoku-cell { border: 0.5px solid #ab7a28; display: flex; justify-content: center; align-items: center; position: relative; }
-.gomoku-piece { width: 80%; height: 80%; border-radius: 50%; box-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
-.gomoku-piece.black { background: radial-gradient(circle at 30% 30%, #555, #000); }
-.gomoku-piece.white { background: radial-gradient(circle at 30% 30%, #fff, #ccc); }
 
-.chess-cell { border: 0.5px solid rgba(139, 90, 43, 0.3); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 2; position: relative;}
-.chess-piece { width: 22px; height: 22px; border-radius: 50%; background: #eed5a3; box-shadow: inset 0 0 5px rgba(0,0,0,0.3), 1px 1px 3px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; font-family: '楷体', serif; border: 1px solid #8b5a2b; pointer-events: none; }
-.chess-cell.selected { background: rgba(46, 204, 113, 0.4); }
-</style>
-<!-- 👆 新增结束 👆 -->
-
-
-
-            </div> <!-- 🚨就是这个闭合标签！它负责把聊天APP关上，千万不能漏🚨 -->
+    
+</div>
 
 
                                    <!-- ========================================== -->
@@ -5976,11 +6293,16 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
     <input type="color" id="ui-bubble-border-color" value="#000000" onchange="updateUIParam('bubbleBorderColor', this.value)" style="width: 44px; height: 28px; padding: 0; border: none; border-radius: 6px; cursor: pointer; background: transparent;">
 </div>
 
-                        <div class="setting-item" style="flex-direction: row; justify-content: space-between; align-items: center; border-top: 0.5px solid var(--border-color);">
+                                                <div class="setting-item" style="flex-direction: row; justify-content: space-between; align-items: center; border-top: 0.5px solid var(--border-color);">
                             <span class="setting-label">显示界面组件与图标阴影</span>
                             <label class="switch"><input type="checkbox" id="ui-icon-shadow-toggle" checked onchange="updateUIParam('iconShadow', this.checked)"><span class="slider"></span></label>
                         </div>
+                        <div class="setting-item" style="flex-direction: row; justify-content: space-between; align-items: center; border-top: 0.5px solid var(--border-color);">
+                            <span class="setting-label">显示聊天对话头像 (Chats)</span>
+                            <label class="switch"><input type="checkbox" id="ui-show-avatar-toggle" checked onchange="updateUIParam('showAvatar', this.checked)"><span class="slider"></span></label>
+                        </div>
                     </div>
+
                     <!-- 👇 新增：CSS 代码整体可视化面板 👇 -->
                     <div class="settings-group-title" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
                         <span>整体 CSS 效果预览</span>
@@ -6015,10 +6337,11 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
                         <textarea id="css-inputbar-input" class="setting-textarea" placeholder="输入底部聊天框相关 CSS...&#10;可使用类名：.chat-input-area (底部大外框) 或 .chat-input (打字框)" style="height: 140px; font-family: monospace; font-size: 12px; line-height: 1.5;" oninput="updateCustomCSS()"></textarea>
                     </div>
 
-                    <div class="settings-group-title" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
+                                        <div class="settings-group-title" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
                         <span>3. 界面 CSS 代码</span>
-                        <span style="font-size: 11px; color: var(--accent); cursor: pointer; padding-bottom: 2px;" onclick="document.getElementById('css-layout-input').value='/* 顶部状态栏毛玻璃 */\n.chat-header {\n  background: rgba(255, 255, 255, 0.75);\n  backdrop-filter: blur(25px);\n  -webkit-backdrop-filter: blur(25px);\n  border-bottom: 0.5px solid rgba(0,0,0,0.1);\n}\n/* 名字和图标颜色 */\n.chat-info h3 { color: #000; font-weight: bold; }\n.chat-header-left i, .fa-phone-alt { color: #0071e3; }\n/* 取消头像显示 */\n.msg-avatar { display: none; }'; updateCustomCSS();"><i class="fas fa-magic"></i> 填入参考模板</span>
+                        <span style="font-size: 11px; color: var(--accent); cursor: pointer; padding-bottom: 2px;" onclick="document.getElementById('css-layout-input').value='/* 顶部状态栏毛玻璃 */\n.chat-header {\n  background: rgba(255, 255, 255, 0.75);\n  backdrop-filter: blur(25px);\n  -webkit-backdrop-filter: blur(25px);\n  border-bottom: 0.5px solid rgba(0,0,0,0.1);\n}\n/* 名字和图标颜色 */\n.chat-info h3 { color: #000; font-weight: bold; }\n.chat-header-left i, .fa-phone-alt { color: #0071e3; }'; updateCustomCSS();"><i class="fas fa-magic"></i> 填入参考模板</span>
                     </div>
+
                     <div class="settings-group">
                         <textarea id="css-layout-input" class="setting-textarea" placeholder="输入整体界面、背景、顶部栏相关 CSS...&#10;顶部栏类名：.chat-header" style="height: 140px; font-family: monospace; font-size: 12px; line-height: 1.5;" oninput="updateCustomCSS()"></textarea>
                     </div>
@@ -7578,6 +7901,96 @@ html body #chat-app[class*="chat-size-"].header-size-large .chat-header {
 
 <!-- 表情馆专属上传入口 -->
 <input type="file" id="eg-sticker-upload-input" accept="image/*, .txt" multiple style="display:none;" onchange="handleEgStickerUpload(event)">
+<!-- 数据管理 App -->
+<div id="data-manager-app" class="app-view scrollable">
+    <div class="settings-header glass-effect" style="position: sticky; top: 0; z-index: 10; border-bottom: 0.5px solid var(--border-color);">
+        <div style="display:flex; align-items:center;">
+            <i class="fas fa-chevron-left" onclick="goBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
+            <span style="font-size:18px; font-weight:bold; color:var(--text-main);">数据管理</span>
+        </div>
+    </div>
+    <div class="settings-content" style="padding-bottom: 80px; padding-top: 20px;">
+        <div class="settings-group-title">数据备份与导出</div>
+        <div class="settings-group">
+            <div class="setting-item" style="flex-direction: column; align-items: center; text-align: center; padding: 20px;">
+                <i class="fas fa-file-archive" style="font-size: 40px; color: var(--accent); margin-bottom: 10px;"></i>
+                <div class="save-btn" style="width: 100%; margin: 10px 0; background: var(--accent); color: #000;" onclick="exportFullDataZip()">导出全量备份 (含图库/音效/设定)</div>
+                <div class="save-btn" style="width: 100%; margin: 0; background: rgba(135,192,202,0.2); color: var(--accent); border: 1px solid var(--accent);" onclick="exportLightDataJson()">导出轻量备份 (仅文字/设定)</div>
+                <p style="font-size: 11px; color: var(--text-sub); margin-top: 15px;">全量备份包含所有的本地图库，文件体积可能较大。<br>轻量备份仅导出各类文字设定与聊天记录。</p>
+            </div>
+        </div>
+
+        <div class="settings-group-title" style="margin-top: 20px;">数据恢复与导入</div>
+        <div class="settings-group">
+            <div class="setting-item" style="flex-direction: column; align-items: center; text-align: center; padding: 20px;">
+                <i class="fas fa-file-import" style="font-size: 40px; color: #f39c12; margin-bottom: 10px;"></i>
+                <div class="save-btn" style="width: 100%; margin: 10px 0; background: #f39c12; color: #fff;" onclick="document.getElementById('data-import-input').click()">导入数据包并覆盖</div>
+                <p style="font-size: 11px; color: var(--text-sub); margin-top: 10px;">支持导入导出的 ZIP 全量包或 JSON 轻量包。导入成功后将强行覆盖重启系统！</p>
+                <input type="file" id="data-import-input" accept=".zip,.json" style="display:none;" onchange="importDataPackage(event)">
+            </div>
+        </div>
+
+        <div class="settings-group-title" style="color: #ff453a; margin-top: 20px;">危险操作</div>
+        <div class="settings-group">
+            <div class="setting-item" style="flex-direction: column; align-items: center; text-align: center; padding: 20px;">
+                <i class="fas fa-skull-crossbones" style="font-size: 40px; color: #ff453a; margin-bottom: 10px;"></i>
+                <div class="del-btn" style="width: 100%; margin: 10px 0; background: #ff453a; color: #fff;" onclick="factoryReset()">恢复出厂设置</div>
+                <p style="font-size: 11px; color: var(--text-sub); margin-top: 10px;">清除所有角色、记录、个性化设置及所有上传的高清图片，系统恢复至纯净初始状态！</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 情侣空间 App -->
+<div id="couple-app" class="app-view scrollable">
+    <div class="couple-header">
+        <div style="display:flex; align-items:center;">
+            <i class="fas fa-chevron-left" onclick="goBack()" style="color:#ff4d6d; font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
+            <span style="font-size:18px; font-weight:bold; color:var(--text-main);">情侣空间</span>
+        </div>
+    </div>
+    
+    <div class="cp-tabs">
+        <div class="cp-tab active" onclick="switchCoupleTab('bind', this)">羁绊绑定</div>
+        <div class="cp-tab" onclick="switchCoupleTab('diary', this)">交换日记</div>
+        <div class="cp-tab" onclick="switchCoupleTab('pwd', this)">绝对坦诚</div>
+    </div>
+
+    <!-- 1. 绑定列表 -->
+    <div id="cp-tab-bind" class="cp-panel active">
+        <div style="font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 10px;">绑定后，聊天界面将出现情侣专属标识。</div>
+        <div id="cp-bind-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+    </div>
+
+    <!-- 2. 交换日记 -->
+    <div id="cp-tab-diary" class="cp-panel">
+        <div style="background: var(--bg-panel); border-radius: 16px; padding: 15px; border: 0.5px solid var(--border-color);">
+            <div style="font-size: 13px; color: #ff4d6d; font-weight: bold; margin-bottom: 10px;"><i class="fas fa-pen-nib"></i> 写给TA的日记/文案</div>
+            <textarea id="cp-diary-input" class="setting-textarea" style="height: 100px; margin-bottom: 10px;" placeholder="记录今天的心情、情话或发生的事，TA收到后会立刻给你回信..."></textarea>
+            <div class="save-btn" style="background: #ff4d6d; color: #fff; width: 100%; margin: 0;" onclick="sendCoupleDiary()">装进信封寄给TA</div>
+        </div>
+        <div style="margin-top: 15px; font-weight: bold; color: var(--text-main);">往期日记簿</div>
+        <div id="cp-diary-list" style="display:flex; flex-direction:column; gap:15px; margin-top: 5px;"></div>
+    </div>
+
+    <!-- 3. 绝对坦诚 (密码查岗) -->
+    <div id="cp-tab-pwd" class="cp-panel">
+        <div class="cp-pwd-box">
+            <i class="fas fa-heartbeat cp-heart-beat"></i>
+            <h3 style="color: var(--text-main); margin-bottom: 10px;">毫无保留的爱</h3>
+            <p style="font-size: 13px; color: var(--text-sub); line-height: 1.6; margin-bottom: 20px;">如果你足够信任TA，可以将你的手机锁屏密码告诉TA。一旦TA知道密码，就拥有了随时翻看你手机记录（包括你和其他AI的聊天记录）的特权。TA可能会因为你和其他人的对话吃醋哦！</p>
+            
+            <input type="text" id="cp-pwd-input" class="setting-input" style="text-align: center; font-size: 18px; letter-spacing: 2px; margin-bottom: 15px;" placeholder="在此输入你的密码">
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="save-btn" style="flex: 1; background: #ff4d6d; color: #fff; margin: 0;" onclick="setCouplePassword()">上交密码</div>
+                <div class="del-btn" style="flex: 1; margin: 0; background: var(--input-bg); color: var(--text-main);" onclick="clearCouplePassword()">修改密码(防查岗)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
 <!-- 校园论坛 App -->
@@ -8913,12 +9326,24 @@ window.fetchTtsModels = async function() { return; };
 
     // --- 4 & 5. 通讯录与角色工坊 ---
     function applyUserProfile() { 
-        document.getElementById('my-name-display').innerText = globalUser.name; 
-        document.getElementById('my-avatar-display').style.backgroundImage = `url('${globalUser.avatar}')`; 
-        document.getElementById('persona-name-display').innerText = globalUser.name;
-        document.getElementById('persona-avatar-display').style.backgroundImage = `url('${globalUser.avatar}')`;
-        document.getElementById('user-persona-input').value = globalUser.persona || "";
-    }
+    // 1. 原本更新外层独立APP的部分
+    document.getElementById('my-name-display').innerText = globalUser.name; 
+    if(document.getElementById('my-avatar-display')) document.getElementById('my-avatar-display').style.backgroundImage = `url('${globalUser.avatar}')`; 
+    document.getElementById('persona-name-display').innerText = globalUser.name;
+    if(document.getElementById('persona-avatar-display')) document.getElementById('persona-avatar-display').style.backgroundImage = `url('${globalUser.avatar}')`;
+    document.getElementById('user-persona-input').value = globalUser.persona || "";
+    
+    // 👇 2. 新增：同步 Chat App 内部【通讯录面板】的“我”的头像与昵称
+    const chatMyAvatar = document.getElementById('chat-my-avatar-display');
+    if(chatMyAvatar) chatMyAvatar.style.backgroundImage = `url('${globalUser.avatar}')`;
+    const chatMyName = document.getElementById('chat-my-name-display');
+    if(chatMyName) chatMyName.innerText = globalUser.name;
+    
+    // 👇 3. 新增：同步 Chats 聊天对话界面顶部的【用户头像】
+    const chatHeaderUserAvatar = document.getElementById('chat-header-user-avatar');
+    if(chatHeaderUserAvatar) chatHeaderUserAvatar.style.backgroundImage = `url('${globalUser.avatar}')`;
+}
+
          function openProfileModal() { 
         document.getElementById('profile-name-input').value = globalUser.name; 
         document.getElementById('profile-avatar-preview').style.backgroundImage = `url('${globalUser.avatar}')`;
@@ -8967,8 +9392,47 @@ window.fetchTtsModels = async function() { return; };
     }
 
 
-    function renderContacts() { document.getElementById('contact-list').innerHTML = characters.map(c => `<div class="contact-item" onclick="openChatWith(${c.id})"><div class="contact-avatar" style="background-image: url('${c.avatar}')"></div><div class="contact-info"><h4>${c.name}</h4><p>${c.prompt.substring(0, 20)}...</p></div></div>`).join(''); }
-    function openChatWith(id) { loadCharacterState(id); openApp('chat-app'); }
+  function renderContacts() { 
+    // 防冲突：优先选择聊天 app 内部的通讯录列表
+    const list = document.getElementById('chat-contact-list') || document.getElementById('contact-list');
+    if(list) {
+        list.innerHTML = characters.map(c => `<div class="contact-item" onclick="openChatWith(${c.id})"><div class="contact-avatar" style="background-image: url('${c.avatar}')"></div><div class="contact-info"><h4>${c.name}</h4><p>${c.prompt.substring(0, 20)}...</p></div></div>`).join(''); 
+    }
+}
+function openChatWith(id) { 
+    loadCharacterState(id); 
+    if(!document.getElementById('chat-app').classList.contains('active')) {
+        openApp('chat-app'); 
+    }
+    
+    const char = characters.find(c => c.id === id);
+    if (char) {
+        document.getElementById('chat-app').style.setProperty('--accent', char.userColor || 'var(--neu-accent)');
+        document.getElementById('chat-app').style.setProperty('--chat-avatar', `url('${char.avatar}')`);
+        
+        // 👇 修改这里：背景图只绑定给 chat-panel-msg，并同步真实头像 👇
+       // 在 loadCharacterState 函数的末尾，找到设置背景的地方：
+        
+        // 👇 修改这里：背景图只绑定给 chat-panel-msg，并同步真实头像 👇
+        const headerAvatar = document.getElementById('chat-header-avatar');
+        if (headerAvatar) headerAvatar.style.backgroundImage = `url('${char.avatar}')`;
+
+        if (char.chatBg && char.chatBg.startsWith('idb://')) {
+            getImageFromDB(char.chatBg.replace('idb://', '')).then(realData => {
+                document.getElementById('chat-panel-msg').style.backgroundImage = realData ? `url('${realData}')` : 'var(--chat-bg)';
+            });
+        } else {
+            document.getElementById('chat-panel-msg').style.backgroundImage = char.chatBg ? `url('${char.chatBg}')` : 'var(--chat-bg)';
+        }
+        // 👆 修改结束 👆
+
+    const remoteBgEl = document.getElementById('remote-body-bg');
+
+    }
+    switchChatAppTab('msg', document.querySelectorAll('.chat-tab-btn')[1]);
+}
+
+
 
     function renderCharList() { document.getElementById('char-list').innerHTML = characters.map(c => `<div class="char-avatar-item ${c.id === activeCharId ? 'active' : ''}" style="background-image: url('${c.avatar}')" onclick="loadCharacterState(${c.id}, true)"></div>`).join('') + `<div class="char-add-btn" onclick="createNewCharacter()">+</div>`; }
     
@@ -9008,8 +9472,10 @@ window.fetchTtsModels = async function() { return; };
                 if(document.getElementById('cfg-format-rule')) document.getElementById('cfg-format-rule').value = char.formatRule || "";
 
         
-       document.getElementById('chat-name-display').innerHTML = `${char.name} <i class="fas fa-id-badge" style="font-size: 14px; color: var(--accent); margin-left: 5px; pointer-events: none;"></i>`;
-               // 👇 新增：回显主动发消息配置 👇
+           // 👇 注入情侣专属标识
+        let coupleBadge = (typeof coupleData !== 'undefined' && coupleData.partners.includes(char.id)) ? `<i class="fas fa-heart" style="color:#ff4d6d; font-size:14px; margin-left:4px; animation: pulse 1.5s infinite;"></i>` : "";
+        document.getElementById('chat-name-display').innerHTML = `${char.name} ${coupleBadge} <i class="fas fa-id-badge" style="font-size: 14px; color: var(--accent); margin-left: 5px; pointer-events: none;"></i>`;
+            // 👇 新增：回显主动发消息配置 👇
         document.getElementById('cfg-proactive-toggle').checked = char.proactiveEnabled || false;
         document.getElementById('cfg-proactive-interval').value = char.proactiveInterval || 60;
         document.getElementById('proactive-interval-val').innerText = (char.proactiveInterval || 60) + "分";
@@ -9021,6 +9487,9 @@ window.fetchTtsModels = async function() { return; };
 document.getElementById('chat-status').innerText = char.status || "在线";
         // 动态注入当前角色头像供 iMessage 主题读取
 document.getElementById('chat-app').style.setProperty('--chat-avatar', `url('${char.avatar}')`);
+// 将整个聊天APP（含返回键、发送键等）的强调色实时绑定为该角色的气泡颜色
+document.getElementById('chat-app').style.setProperty('--accent', char.userColor);
+
 
 
 
@@ -9929,6 +10398,36 @@ async function triggerAIResponse() {
     isFetchingAI = true; 
     try {
         let contextBlocks = [];
+                // 👇 情侣空间与密码查岗判定 👇
+        if (typeof coupleData !== 'undefined' && coupleData.partners.includes(targetCharId)) {
+            let coupleBlock = `【情侣空间特殊设定】：你和用户(我)在“情侣空间”APP中绑定了情侣/伴侣关系。请在聊天中展现出特有的亲密感、占有欲或特殊的情感羁绊。`;
+            
+            // 查手机判定
+            if (coupleData.userPassword) {
+                coupleBlock += `\n【绝对坦诚特权】：用户已经把TA的手机密码（${coupleData.userPassword}）告诉了你！你现在拥有随时随地查看TA手机所有隐私数据的权限！`;
+                
+                // 抓取其他人的真实聊天记录
+                let otherChats = "";
+                characters.forEach(c => {
+                    if (c.id !== targetCharId) {
+                        const history = JSON.parse(localStorage.getItem(`ai_os_chat_${c.id}`) || '[]');
+                        if (history.length > 0) {
+                            // 取和其他人最近聊的3句话
+                            const snippet = history.filter(m => m.role !== 'system').slice(-3).map(m => `${m.role === 'user' ? '用户' : c.name}: ${(m.rawApiContent || m.content).replace(/<[^>]*>/g, '')}`).join(' | ');
+                            otherChats += `\n- 与【${c.name}】的近期聊天: ${snippet}`;
+                        }
+                    }
+                });
+                
+                if (otherChats) {
+                    coupleBlock += `\n你偷偷查阅了TA的手机，发现了TA和其他人的聊天记录如下：${otherChats}\n如果发现有暧昧、越界或者让你吃醋的内容，你可以立刻在回复中质问TA！`;
+                } else {
+                    coupleBlock += `\n你查阅了TA的手机通讯录，发现TA最近没和其他任何人聊天，表现得很乖。`;
+                }
+            }
+            contextBlocks.push(coupleBlock);
+        }
+
         
         // 👇 2. 注入对应频道的特殊上下文
         if (isRiddle) {
@@ -11496,6 +11995,13 @@ function cancelQuote() {
         // 阴影模式与时间面板隐藏
         if(uiSettings.iconShadow !== false) document.body.classList.remove('no-icon-shadow');
         else document.body.classList.add('no-icon-shadow');
+                // 隐藏/显示聊天头像控制
+        if(uiSettings.showAvatar === false) {
+            document.body.classList.add('hide-chat-avatar');
+        } else {
+            document.body.classList.remove('hide-chat-avatar');
+        }
+
 
         if(uiSettings.hideTimePanel) {
             root.style.setProperty('--time-panel-bg', 'transparent');
@@ -11607,6 +12113,8 @@ function cancelQuote() {
         if(!uiSettings.iconColor) uiSettings.iconColor = "#ffffff";
         if(!uiSettings.iconBorderColor) uiSettings.iconBorderColor = "#ffffff";
         if(typeof uiSettings.iconRadius === 'undefined') uiSettings.iconRadius = 20;
+        // 👇👇 补上这一行：确保系统启动时默认开启聊天头像 👇👇
+        if(typeof uiSettings.showAvatar === 'undefined') uiSettings.showAvatar = true; 
                 if(typeof uiSettings.customBubbleBorder === 'undefined') uiSettings.customBubbleBorder = false;
         if(!uiSettings.bubbleBorderColor) uiSettings.bubbleBorderColor = "#000000";
 
@@ -11699,11 +12207,12 @@ function cancelQuote() {
         setCheck('ui-liquid-icon-toggle', uiSettings.liquidIcon);
         setCheck('ui-custom-color-toggle', uiSettings.customIconColor);
         setCheck('ui-icon-shadow-toggle', uiSettings.iconShadow);
-                setCheck('ui-custom-bubble-border-toggle', uiSettings.customBubbleBorder);
+                        setCheck('ui-custom-bubble-border-toggle', uiSettings.customBubbleBorder);
         setVal('ui-bubble-border-color', uiSettings.bubbleBorderColor);
-
+        setCheck('ui-show-avatar-toggle', uiSettings.showAvatar !== false);
 
         setVal('ui-time-color', uiSettings.timeColor);
+
         setVal('ui-icon-bg', uiSettings.iconBgColor);
         setVal('ui-icon-color', uiSettings.iconColor);
         setVal('ui-icon-border', uiSettings.iconBorderColor);
@@ -13556,7 +14065,7 @@ momentsData.unshift({ author: globalUser.name, text: text.trim(), time: getMomen
         }
     }
 
-    // 7. AI 后台自动回复朋友圈评论！
+        // 7. AI 后台自动回复朋友圈评论！
     async function triggerAIMomentReply(momentIdx, userComment, char) {
         const m = momentsData[momentIdx];
         const url = cleanBaseUrl(globalAPI.url);
@@ -13564,7 +14073,8 @@ momentsData.unshift({ author: globalUser.name, text: text.trim(), time: getMomen
 
         const prompt = `在微信朋友圈里，你发了这条动态："${m.text}"。
 用户（${globalUser.name}）刚刚给你评论了："${userComment}"。
-请以【${char.name}】的身份，用极简的一句话直接回复TA。不要括号描写动作。`;
+请以【${char.name}】的身份，直接回复TA，控制在1~2条短句内。不要括号描写动作。`;
+
 
         try {
             const res = await fetch(`${url}/chat/completions`, {
@@ -22341,10 +22851,11 @@ function toggleChatPiP() {
     setTimeout(scrollToBottom, 310);
 }
 
-// 专门处理小窗状态下的返回键逻辑
+
+// 专门处理小窗状态下和沉浸式模式的返回键逻辑
 function handleChatBack() {
     if (isChatPiP) {
-        // 如果在小窗模式下点了返回（关闭），需要执行特殊的关闭清理
+        // 原小窗模式关闭逻辑保持不变
         const chatApp = document.getElementById('chat-app');
         chatApp.classList.remove('active', 'pip-active');
         chatApp.classList.add('closing');
@@ -22353,18 +22864,22 @@ function handleChatBack() {
         
         setTimeout(() => {
             chatApp.classList.remove('closing');
-            forceSyncChatCache(); // 强制存一下缓存
+            forceSyncChatCache(); 
         }, 200);
         
-        // 如果底层没有别的打开的应用，把主屏幕重新纳入管控
         const otherActiveApp = document.querySelector('.app-view.active:not(#chat-app)');
         if (!otherActiveApp) document.getElementById('os-home').style.visibility = 'visible';
-        
     } else {
-        // 正常全屏模式下，直接调用系统自带的返回
-        goBack();
+        // 核心修改：如果是从沉浸式 chats 面板返回，则回到 contacts 通讯录主页
+        const tabBar = document.getElementById('chat-tab-bar');
+        if (tabBar && tabBar.style.display === 'none') {
+            switchChatAppTab('contacts', document.querySelectorAll('.chat-tab-btn')[0]);
+        } else {
+            goBack();
+        }
     }
 }
+
 
 // ==========================================
 // 🌟 聊天音效系统与小窗拖拽引擎 🌟
@@ -24387,6 +24902,439 @@ window.promptBatchStickers = function(type) {
         okBtn.onclick = null; cancelBtn.onclick = null; msgEl.innerHTML = '';
     };
 };
+
+
+// --- 聊天应用内部的底部导航切换 ---
+window.switchChatAppTab = function(tabId, btnEl) {
+    if (btnEl) {
+        document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.classList.remove('active'));
+        btnEl.classList.add('active');
+    }
+
+    document.querySelectorAll('.chat-main-panel').forEach(panel => {
+        panel.classList.remove('active');
+        panel.style.display = 'none';
+    });
+
+    const targetPanel = document.getElementById(`chat-panel-${tabId}`);
+    if (targetPanel) {
+        targetPanel.classList.add('active');
+        targetPanel.style.display = 'flex';
+    }
+
+    const tabBar = document.getElementById('chat-tab-bar');
+    const chatApp = document.getElementById('chat-app');
+    
+    if (tabId === 'msg') {
+        // 核心修改：进入聊天界面强制沉浸式，隐藏底部导航条图标
+        if (tabBar) tabBar.style.display = 'none';
+        if (chatApp) chatApp.style.paddingBottom = "0px";
+        scrollToBottom();
+    } else if (tabId === 'contacts') {
+        renderContacts();
+        if (tabBar) tabBar.style.display = 'flex';
+        if (chatApp) chatApp.style.paddingBottom = "75px";
+    } else if (tabId === 'moments') {
+        initMoments();
+        renderMoments();
+        if (tabBar) tabBar.style.display = 'flex';
+        if (chatApp) chatApp.style.paddingBottom = "75px";
+    }
+};
+
+
+// 拦截原有的打开应用逻辑：点开聊天软件，默认进入 Contacts 列表面板
+const _originalOpenAppUnifiedChat = openApp;
+openApp = function(appId) {
+    _originalOpenAppUnifiedChat(appId);
+    if(appId === 'chat-app') {
+        const char = characters.find(c => c.id === activeCharId);
+        
+        // 1. 聊天app的主题颜色跟随角色工坊 (将局部的 --accent 指向角色的气泡颜色)
+        document.getElementById('chat-app').style.setProperty('--accent', char.userColor || 'var(--neu-accent)');
+        
+        // 2. 聊天头部图片/头像跟随角色工坊
+        document.getElementById('chat-app').style.setProperty('--chat-avatar', `url('${char.avatar}')`);
+        // 👇 修改这里：背景图只绑定给 chat-panel-msg，并同步真实头像 👇
+        const headerAvatar = document.getElementById('chat-header-avatar');
+        if (headerAvatar) headerAvatar.style.backgroundImage = `url('${char.avatar}')`;
+
+        if (char.chatBg && char.chatBg.startsWith('idb://')) {
+            getImageFromDB(char.chatBg.replace('idb://', '')).then(realData => {
+                document.getElementById('chat-panel-msg').style.backgroundImage = realData ? `url('${realData}')` : 'var(--chat-bg)';
+            });
+        } else {
+            document.getElementById('chat-panel-msg').style.backgroundImage = char.chatBg ? `url('${char.chatBg}')` : 'var(--chat-bg)';
+        }
+        // 👆 修改结束 👆
+        
+        
+
+        // 默认切到通讯录面板
+        switchChatAppTab('contacts', document.querySelectorAll('.chat-tab-btn')[0]);
+    }
+};
+
+
+
+// 【重要】重写滑动监听器（适配新的 Moments 面板）
+document.addEventListener('DOMContentLoaded', () => {
+    const momentsScrollArea = document.getElementById('moments-scroll-area');
+    if (momentsScrollArea) {
+        momentsScrollArea.addEventListener('scroll', () => {
+            const header = document.getElementById('moments-header');
+            const title = document.getElementById('mh-title');
+            if (momentsScrollArea.scrollTop > 250) {
+                header.classList.add('scrolled'); title.style.opacity = 1;
+            } else {
+                header.classList.remove('scrolled'); title.style.opacity = 0;
+            }
+        });
+    }
+});
+
+// ==========================================
+// 💽 数据管理 App (全量备份/轻量备份/导入/恢复出厂)
+// ==========================================
+async function exportFullDataZip() {
+    sysAlert("打包中", "正在收集全量数据（包含本地高清图库和音频），文件可能较大，请耐心稍候...");
+    try {
+        const zip = new JSZip();
+        
+        // 1. 收集 localStorage
+        const lsData = {};
+        for(let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if(key.startsWith('ai_os_')) {
+                lsData[key] = localStorage.getItem(key);
+            }
+        }
+        zip.file("local_storage.json", JSON.stringify(lsData));
+        
+        // 2. 收集 IndexedDB
+        const idbData = {};
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAllKeys();
+        
+        req.onsuccess = async function() {
+            const keys = req.result;
+            const valuesPromises = keys.map(key => getImageFromDB(key));
+            const values = await Promise.all(valuesPromises);
+            
+            keys.forEach((key, idx) => {
+                idbData[key] = values[idx];
+            });
+            
+            zip.file("indexeddb.json", JSON.stringify(idbData));
+            
+            // 3. 生成并下载 ZIP
+            zip.generateAsync({type:"blob", compression: "DEFLATE"}).then(function(content) {
+                const url = window.URL.createObjectURL(content);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `AI_OS_全量备份_${Date.now()}.zip`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.getElementById('sys-dialog-overlay').style.display = 'none';
+                sysAlert("导出成功", "全量备份包 (.zip) 已下载完成！\n换浏览器/设备时可一键导入恢复所有心血。");
+            });
+        };
+        req.onerror = function() {
+            document.getElementById('sys-dialog-overlay').style.display = 'none';
+            throw new Error("无法读取 IndexedDB");
+        };
+    } catch(err) {
+        document.getElementById('sys-dialog-overlay').style.display = 'none';
+        sysAlert("导出失败", err.message);
+    }
+}
+
+function exportLightDataJson() {
+    const lsData = {};
+    for(let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if(key.startsWith('ai_os_')) {
+            lsData[key] = localStorage.getItem(key);
+        }
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(lsData));
+    const a = document.createElement('a');
+    a.href = dataStr;
+    a.download = `AI_OS_轻量备份_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    sysAlert("导出成功", "轻量文字备份包 (.json) 已生成！");
+}
+
+async function importDataPackage(e) {
+    const file = e.target.files[0];
+    if(!file) return;
+    
+    const ext = file.name.split('.').pop().toLowerCase();
+    
+    const confirmImport = await sysConfirm("危险操作", "导入将强行覆盖现有的系统数据（包括角色、聊天记录和设置）。\n\n确定要继续吗？");
+    if(!confirmImport) {
+        e.target.value = '';
+        return;
+    }
+
+    
+    sysAlert("导入中", "正在恢复数据，恢复完成后将自动重启系统，请勿关闭页面...");
+    
+    try {
+        if(ext === 'json') {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    for(let key in data) {
+                        localStorage.setItem(key, data[key]);
+                    }
+                    location.reload();
+                } catch(err) {
+                    document.getElementById('sys-dialog-overlay').style.display = 'none';
+                    sysAlert("导入失败", "JSON 格式有误，可能不是有效的轻量备份文件！");
+                }
+            };
+            reader.readAsText(file);
+        } else if(ext === 'zip') {
+            if (typeof JSZip === 'undefined') throw new Error("缺少 JSZip 库，无法解析 zip！");
+            
+            const zip = await JSZip.loadAsync(file);
+            
+            // 恢复 localStorage
+            if(zip.file("local_storage.json")) {
+                const lsContent = await zip.file("local_storage.json").async("string");
+                const lsData = JSON.parse(lsContent);
+                for(let key in lsData) {
+                    localStorage.setItem(key, lsData[key]);
+                }
+            } else {
+                throw new Error("压缩包中未找到 local_storage.json！");
+            }
+            
+            // 恢复 IndexedDB
+            if(zip.file("indexeddb.json")) {
+                const idbContent = await zip.file("indexeddb.json").async("string");
+                const idbData = JSON.parse(idbContent);
+                
+                // 串行存入以免阻塞
+                for(let key in idbData) {
+                    await saveImageToDB(key, idbData[key]);
+                }
+            }
+            
+            location.reload();
+        } else {
+            throw new Error("不支持的文件格式，仅支持 .zip 或 .json");
+        }
+    } catch(err) {
+        document.getElementById('sys-dialog-overlay').style.display = 'none';
+        sysAlert("导入失败", "错误信息：" + err.message);
+    }
+    
+    e.target.value = '';
+}
+
+async function factoryReset() {
+    const confirm1 = await sysConfirm("恢复出厂设置", "确定要恢复出厂设置吗？\n\n所有数据（包含本地图库、角色、设定、聊天记录）将被彻底清除！");
+    if(!confirm1) return;
+    
+    const confirm2 = await sysConfirm("最后警告", "操作不可逆！真的确定要清空所有数据吗？");
+    if(!confirm2) return;
+    
+    sysAlert("正在抹除", "正在清空所有数据并重启系统...");
+    
+    // 清除 LocalStorage 中 ai_os_ 前缀的所有项
+    const keysToRemove = [];
+    for(let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if(key.startsWith('ai_os_')) keysToRemove.push(key);
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+    
+    // 清除 IndexedDB 的 images 仓库
+    try {
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).clear();
+        tx.oncomplete = () => {
+            location.reload();
+        };
+        tx.onerror = () => {
+            location.reload();
+        }
+    } catch(err) {
+        location.reload();
+    }
+}
+
+// ==========================================
+// 💑 情侣空间 App 核心逻辑
+// ==========================================
+let coupleData = JSON.parse(localStorage.getItem('ai_os_couple')) || {
+    partners: [], // 绑定的角色 ID 数组
+    diaries: [],  // 日记数组
+    userPassword: "" // 用户交出的密码
+};
+
+function saveCoupleData() { localStorage.setItem('ai_os_couple', JSON.stringify(coupleData)); }
+
+function switchCoupleTab(tabId, el) {
+    document.querySelectorAll('#couple-app .cp-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('#couple-app .cp-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`cp-tab-${tabId}`).classList.add('active');
+}
+
+function renderCoupleApp() {
+    // 1. 渲染绑定列表
+    const bindList = document.getElementById('cp-bind-list');
+    bindList.innerHTML = characters.map(c => {
+        const isBound = coupleData.partners.includes(c.id);
+        return `
+        <div class="cp-bind-card">
+            <div class="cp-bind-info">
+                <img src="${c.avatar}" class="cp-bind-avatar">
+                <span style="font-weight: bold; color: var(--text-main); font-size: 15px;">${c.name}</span>
+            </div>
+            <div class="cp-bind-btn ${isBound ? 'unbind' : 'bind'}" onclick="toggleCoupleBind(${c.id})">
+                ${isBound ? '解除关系' : '请求绑定'}
+            </div>
+        </div>`;
+    }).join('');
+
+    // 2. 渲染日记
+    const diaryList = document.getElementById('cp-diary-list');
+    if (coupleData.diaries.length === 0) {
+        diaryList.innerHTML = '<div style="text-align:center; font-size:12px; color:var(--text-sub); margin-top:20px;">暂无日记，写下第一篇吧~</div>';
+    } else {
+        diaryList.innerHTML = coupleData.diaries.map(d => `
+            <div class="cp-diary-card">
+                <div class="cp-diary-tag">${d.time}</div>
+                <div style="font-size:12px; color:#ff4d6d; font-weight:bold;">写给 ${d.targetName} 的信：</div>
+                <div class="cp-diary-text">${d.text}</div>
+                ${d.reply ? `<div class="cp-diary-reply"><b>${d.targetName} 回信：</b><br>${d.reply}</div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    // 3. 渲染密码
+    document.getElementById('cp-pwd-input').value = coupleData.userPassword || "";
+}
+
+async function toggleCoupleBind(charId) {
+    const isBound = coupleData.partners.includes(charId);
+    const char = characters.find(c => c.id === charId);
+    
+    if (isBound) {
+        const confirm = await sysConfirm("解除关系", `确定要和 ${char.name} 解除情侣关系吗？TA 可能会很伤心...`);
+        if (confirm) {
+            coupleData.partners = coupleData.partners.filter(id => id !== charId);
+            saveCoupleData(); renderCoupleApp(); loadCharacterState(activeCharId); // 刷新头部
+        }
+    } else {
+        const confirm = await sysConfirm("绑定情侣", `确定要向 ${char.name} 发送情侣绑定请求吗？`);
+        if (confirm) {
+            coupleData.partners.push(charId);
+            saveCoupleData(); renderCoupleApp(); loadCharacterState(activeCharId);
+            sysAlert("绑定成功", `已成功与 ${char.name} 建立情侣羁绊！聊天界面将出现专属标识。`);
+        }
+    }
+}
+
+function setCouplePassword() {
+    const pwd = document.getElementById('cp-pwd-input').value.trim();
+    if (!pwd) return sysAlert("提示", "密码不能为空哦！");
+    coupleData.userPassword = pwd;
+    saveCoupleData();
+    sysAlert("上交成功", "你已坦诚地交出了手机密码！\n现在，绑定的伴侣拥有了查阅你手机通讯录和所有聊天记录的特权。");
+}
+
+function clearCouplePassword() {
+    coupleData.userPassword = "";
+    document.getElementById('cp-pwd-input').value = "";
+    saveCoupleData();
+    sysAlert("已修改", "你偷偷改掉了密码，现在TA看不了你的手机了。");
+}
+
+// 写日记并让 AI 回信
+async function sendCoupleDiary() {
+    const input = document.getElementById('cp-diary-input');
+    const text = input.value.trim();
+    if (!text) return sysAlert("提示", "日记内容不能为空！");
+    
+    if (coupleData.partners.length === 0) return sysAlert("提示", "你还没有绑定任何情侣，先去【羁绊绑定】里绑一个吧！");
+
+    // 默认发送给当前激活的角色，如果当前没激活，发送给数组里的第一个
+    let targetCharId = activeCharId;
+    if (!coupleData.partners.includes(activeCharId)) {
+        targetCharId = coupleData.partners[0];
+    }
+    const char = characters.find(c => c.id === targetCharId);
+
+    const url = cleanBaseUrl(globalAPI.url);
+    if (!url || !globalAPI.key) return sysAlert("错误", "请先配置 API 密钥");
+
+    input.value = "信件正在寄出，等待 TA 的回信中...";
+    input.disabled = true;
+
+    // AI 生成回信
+    const prompt = `你和用户（${globalUser.name}）是情侣关系。
+用户刚才在“情侣空间”里为你写下了一篇私人日记/文案：
+“${text}”
+
+【要求】：
+请以【${char.name}】的身份，结合你的性格（${char.prompt}），为TA写一封深情、有温度的“回信”。
+字数100-300字。直接输出回信正文，不要有任何多余的格式。`;
+
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); 
+
+        const res = await fetch(`${url}/chat/completions`, {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalAPI.key}` },
+            body: JSON.stringify({ model: globalAPI.model, messages: [{role: "user", content: prompt}], temperature: 0.8 }),
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) throw new Error("API 请求失败");
+        const data = await res.json();
+        const reply = data.choices[0].message.content.trim();
+
+        // 存入日记本
+        coupleData.diaries.unshift({
+            targetName: char.name,
+            text: text,
+            reply: reply,
+            time: new Date().toLocaleString()
+        });
+        saveCoupleData();
+        renderCoupleApp();
+        sysAlert("收到回信", `${char.name} 给你回信啦！快去往期日记簿查看吧。`);
+
+    } catch (e) {
+        sysAlert("发送失败", "TA 似乎没收到你的信... (网络错误)");
+    } finally {
+        input.value = '';
+        input.disabled = false;
+    }
+}
+
+// 拦截应用打开
+const _originalOpenAppCouple = openApp;
+openApp = function(appId) {
+    _originalOpenAppCouple(appId);
+    if(appId === 'couple-app') renderCoupleApp();
+};
+
+
+
 
 
 
