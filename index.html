@@ -4533,6 +4533,83 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
 .cp-pwd-box { background: linear-gradient(135deg, rgba(255,77,109,0.1) 0%, rgba(255,143,113,0.05) 100%); border: 1px solid rgba(255,77,109,0.3); border-radius: 20px; padding: 20px; text-align: center; }
 .cp-heart-beat { font-size: 50px; color: #ff4d6d; animation: pulse 1.5s infinite; margin-bottom: 10px; }
 
+/* 👇 新增：iOS 18 锁屏界面样式 👇 */
+#ios18-lock-screen {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 9999990;
+    background: var(--screen-bg);
+    background-size: cover; background-position: center;
+    display: flex; flex-direction: column; align-items: center;
+    /* 增加动画流畅度 */
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+    color: #fff; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    overflow: hidden;
+    will-change: transform, opacity;
+}
+/* 优化暗度：去掉死板的全局黑底，改为仅在顶部和底部加极轻微的渐变，确保时间白字清晰即可，让壁纸透亮 */
+#ios18-lock-screen::before {
+    content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,0.2) 100%);
+    pointer-events: none;
+}
+.lock-time-container {
+    position: relative; z-index: 2; margin-top: 80px; text-align: center;
+    transition: transform 0.3s;
+}
+.lock-time {
+    font-size: 85px; font-weight: 600; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.lock-date {
+    font-size: 20px; font-weight: 500; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.lock-widgets {
+    display: flex; gap: 15px; justify-content: center; margin-top: 15px;
+}
+.lock-widget {
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 50%; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; font-size: 24px;
+    border: 0.5px solid rgba(255,255,255,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.lock-hint {
+    position: absolute; bottom: 50px; left: 0; width: 100%; text-align: center;
+    font-size: 14px; font-weight: 500; z-index: 2; opacity: 0.8;
+    animation: pulseHint 2.5s infinite; text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    letter-spacing: 1px;
+}
+/* 上滑动画提示：箭头向上浮动 */
+@keyframes pulseHint { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-8px); } }
+
+/* 密码输入区 - 大幅提亮，改为清透毛玻璃 */
+#lock-pwd-panel {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(20, 20, 25, 0.35); /* 降低透明度 */
+    backdrop-filter: blur(45px) saturate(180%); -webkit-backdrop-filter: blur(45px) saturate(180%);
+    z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transform: translateY(100%); 
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.2, 1);
+    will-change: transform;
+}
+#lock-pwd-panel.show { transform: translateY(0); }
+
+.pwd-dots { display: flex; gap: 18px; margin: 30px 0 50px; }
+.pwd-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #fff; transition: background 0.2s, transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.pwd-dot.filled { background: #fff; transform: scale(1.1); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.pwd-keyboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px 25px; }
+.pwd-key { 
+    width: 75px; height: 75px; border-radius: 50%; 
+    background: rgba(255,255,255,0.12); border: 0.5px solid rgba(255,255,255,0.08); /* 增加极细反光边框增强质感 */
+    display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    font-size: 32px; cursor: pointer; transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.pwd-key:active { background: rgba(255,255,255,0.3); transform: scale(0.9); }
+.pwd-key span { font-size: 11px; letter-spacing: 2px; margin-top: -2px; opacity: 0.7; font-weight: 600; }
+.pwd-title { font-size: 20px; font-weight: 600; margin-bottom: 10px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); letter-spacing: 1px; }
+/* 👆 新增结束 👆 */
+
+
+
+
 
 
 
@@ -4679,6 +4756,44 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
     </div>
 </div>
 <!-- 👆 新增结束 👆 -->
+
+<!-- 👇 新增：仿 iOS 18 锁屏界面 👇 -->
+<div id="ios18-lock-screen" style="display:none;">
+    <div class="lock-time-container" id="lock-time-container">
+        <div class="lock-date" id="lock-date-display">1月1日 星期一</div>
+        <div class="lock-time" id="lock-time-display">12:00</div>
+        <div class="lock-widgets">
+            <div class="lock-widget"><i class="fas fa-cloud-sun"></i></div>
+            <div class="lock-widget"><i class="fas fa-battery-three-quarters"></i></div>
+            <div class="lock-widget"><i class="fas fa-calendar-alt"></i></div>
+        </div>
+    </div>
+    <!-- 提示用户下滑 -->
+<div class="lock-hint" id="lock-hint-text"><i class="fas fa-chevron-up" style="font-size:12px; margin-bottom:4px; display:block;"></i> 上滑以解锁</div>
+
+    <div id="lock-pwd-panel">
+        <div class="pwd-title" id="pwd-title-text">输入密码</div>
+        <div class="pwd-dots" id="pwd-dots-container">
+            <div class="pwd-dot"></div><div class="pwd-dot"></div><div class="pwd-dot"></div><div class="pwd-dot"></div>
+        </div>
+        <div class="pwd-keyboard">
+            <div class="pwd-key" onclick="pressLockKey('1')">1 <span></span></div>
+            <div class="pwd-key" onclick="pressLockKey('2')">2 <span>ABC</span></div>
+            <div class="pwd-key" onclick="pressLockKey('3')">3 <span>DEF</span></div>
+            <div class="pwd-key" onclick="pressLockKey('4')">4 <span>GHI</span></div>
+            <div class="pwd-key" onclick="pressLockKey('5')">5 <span>JKL</span></div>
+            <div class="pwd-key" onclick="pressLockKey('6')">6 <span>MNO</span></div>
+            <div class="pwd-key" onclick="pressLockKey('7')">7 <span>PQRS</span></div>
+            <div class="pwd-key" onclick="pressLockKey('8')">8 <span>TUV</span></div>
+            <div class="pwd-key" onclick="pressLockKey('9')">9 <span>WXYZ</span></div>
+            <div class="pwd-key" style="background:transparent; font-size:16px; font-weight:bold;" onclick="cancelLockPwd()">取消</div>
+            <div class="pwd-key" onclick="pressLockKey('0')">0 <span></span></div>
+            <div class="pwd-key" style="background:transparent; font-size:16px; font-weight:bold;" onclick="deleteLockKey()">删除</div>
+        </div>
+    </div>
+</div>
+<!-- 👆 新增结束 👆 -->
+
 
 
 
@@ -4995,13 +5110,25 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
 
 
             <!-- 底部 Dock 栏必须移出滑动区，固定在底部 -->
-            <div class="dock glass-effect">
-                <div class="app-container" onclick="openApp('chat-app')"><div class="app-icon" style="background: linear-gradient(135deg, rgba(220, 210, 215, 0.4) 0%, rgba(195, 185, 195, 0.1) 100%);"><i class="fas fa-comment"></i></div></div>
-                <div class="app-container" onclick="openApp('persona-app')"><div class="app-icon" style="background: linear-gradient(135deg, rgba(225, 205, 215, 0.4) 0%, rgba(200, 185, 195, 0.1) 100%);"><i class="fas fa-id-card"></i></div></div>
-                <div class="app-container" onclick="openApp('settings-app')"><div class="app-icon" style="background: linear-gradient(135deg, rgba(200, 195, 200, 0.4) 0%, rgba(175, 170, 180, 0.1) 100%);"><i class="fas fa-user-cog"></i></div></div>
-                <div class="app-container" onclick="openApp('couple-app')" data-drag-id="sys-couple"><div class="app-icon" style="background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%); box-shadow: 0 4px 15px rgba(255,117,140,0.3);"><i class="fas fa-heart" style="color: #fff;"></i></div><div class="app-label" style="color: #ff4d6d; font-weight: bold;"></div></div>
+<div class="dock glass-effect">
+    <div class="app-container" onclick="openApp('chat-app')">
+        <div class="app-icon" style="background: linear-gradient(135deg, rgba(220, 210, 215, 0.4) 0%, rgba(195, 185, 195, 0.1) 100%);"><i class="fas fa-comment"></i></div>
+    </div>
+    
+    <div class="app-container" onclick="openApp('persona-app')">
+        <div class="app-icon" style="background: linear-gradient(135deg, rgba(225, 205, 215, 0.4) 0%, rgba(200, 185, 195, 0.1) 100%);"><i class="fas fa-id-card"></i></div>
+    </div>
+    
+    <div class="app-container" onclick="openApp('settings-app')">
+        <div class="app-icon" style="background: linear-gradient(135deg, rgba(200, 195, 200, 0.4) 0%, rgba(175, 170, 180, 0.1) 100%);"><i class="fas fa-user-cog"></i></div>
+    </div>
+    
+    <div class="app-container" onclick="openApp('couple-app')">
+        <div class="app-icon" style="background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%); box-shadow: 0 4px 15px rgba(255,117,140,0.3);"><i class="fas fa-heart" style="color: #fff;"></i></div>
+    </div>
+</div>
 
-            </div>
+
 
                                                 <!-- 小宠物 App 界面 (拓麻歌子风格) -->
             <div id="pet-app" class="app-view">
@@ -25332,6 +25459,186 @@ openApp = function(appId) {
     _originalOpenAppCouple(appId);
     if(appId === 'couple-app') renderCoupleApp();
 };
+
+// 👇 新增：仿 iOS 18 锁屏界面核心逻辑 👇
+let savedLockPwd = localStorage.getItem('ai_os_ios_pwd');
+let currentInputPwd = '';
+let isSettingInitialPwd = false;
+let firstInputPwd = '';
+let lockScreenActive = false;
+
+function initLockScreen() {
+    const lockScreen = document.getElementById('ios18-lock-screen');
+    if (!lockScreen) return;
+    lockScreen.style.display = 'flex';
+    lockScreenActive = true;
+    
+    // 更新锁屏时间
+    const updateLockTime = () => {
+        if (!lockScreenActive) return;
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+        
+        const lockTime = document.getElementById('lock-time-display');
+        const lockDate = document.getElementById('lock-date-display');
+        if(lockTime) lockTime.innerText = `${h}:${m}`;
+        if(lockDate) lockDate.innerText = `${month}月${date}日 ${days[now.getDay()]}`;
+    };
+    updateLockTime();
+    setInterval(updateLockTime, 1000);
+
+        // 绑定向上滑动的手势打开密码盘
+    let startY = 0;
+    lockScreen.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+    }, {passive: true});
+    lockScreen.addEventListener('touchend', (e) => {
+        let deltaY = e.changedTouches[0].clientY - startY;
+        if (deltaY < -50) showLockPwdPanel(); // 向上滑动距离超50触发 (Y轴变小即为上移)
+    }, {passive: true});
+    
+    // 兼容PC鼠标拖拽上滑
+    lockScreen.addEventListener('mousedown', (e) => { startY = e.clientY; });
+    lockScreen.addEventListener('mouseup', (e) => {
+        if (e.clientY - startY < -50) showLockPwdPanel();
+    });
+
+}
+
+window.showLockPwdPanel = function() {
+    const panel = document.getElementById('lock-pwd-panel');
+    const title = document.getElementById('pwd-title-text');
+    panel.classList.add('show');
+    currentInputPwd = '';
+    updatePwdDots();
+    
+    savedLockPwd = localStorage.getItem('ai_os_ios_pwd');
+    if (!savedLockPwd) {
+        // 如果系统第一次使用，诱导用户设置初始密码
+        isSettingInitialPwd = true;
+        firstInputPwd = '';
+        title.innerText = "设置初始密码 (4位)";
+    } else {
+        // 否则正常要求输入密码解锁
+        isSettingInitialPwd = false;
+        title.innerText = "输入密码";
+    }
+}
+
+window.cancelLockPwd = function() {
+    document.getElementById('lock-pwd-panel').classList.remove('show');
+    currentInputPwd = '';
+    updatePwdDots();
+}
+
+window.pressLockKey = function(num) {
+    if (currentInputPwd.length < 4) {
+        currentInputPwd += num;
+        updatePwdDots();
+        if (currentInputPwd.length === 4) {
+            setTimeout(processLockPwd, 100);
+        }
+    }
+}
+
+window.deleteLockKey = function() {
+    if (currentInputPwd.length > 0) {
+        currentInputPwd = currentInputPwd.slice(0, -1);
+        updatePwdDots();
+    }
+}
+
+function updatePwdDots() {
+    const dots = document.querySelectorAll('.pwd-dot');
+    dots.forEach((dot, idx) => {
+        if (idx < currentInputPwd.length) dot.classList.add('filled');
+        else dot.classList.remove('filled');
+    });
+}
+
+function processLockPwd() {
+    const title = document.getElementById('pwd-title-text');
+    if (isSettingInitialPwd) {
+        if (!firstInputPwd) {
+            firstInputPwd = currentInputPwd;
+            currentInputPwd = '';
+            updatePwdDots();
+            title.innerText = "再次输入以确认";
+        } else {
+            if (currentInputPwd === firstInputPwd) {
+                // 设置成功，存储并解锁进入桌面
+                localStorage.setItem('ai_os_ios_pwd', currentInputPwd);
+                savedLockPwd = currentInputPwd;
+                unlockSystem();
+            } else {
+                title.innerText = "密码不一致，请重设";
+                firstInputPwd = '';
+                currentInputPwd = '';
+                updatePwdDots();
+                setTimeout(() => { title.innerText = "设置初始密码 (4位)"; }, 1500);
+            }
+        }
+    } else {
+        if (currentInputPwd === savedLockPwd) {
+            unlockSystem(); // 密码正确解锁
+        } else {
+            // 密码错误反馈动画 (左右震动反馈)
+            title.innerText = "密码错误";
+            currentInputPwd = '';
+            updatePwdDots();
+            const panel = document.getElementById('lock-pwd-panel');
+            panel.style.transform = 'translateY(0) translateX(-15px)';
+            setTimeout(()=> panel.style.transform = 'translateY(0) translateX(15px)', 50);
+            setTimeout(()=> panel.style.transform = 'translateY(0) translateX(-15px)', 100);
+            setTimeout(()=> panel.style.transform = 'translateY(0) translateX(0)', 150);
+            setTimeout(() => { title.innerText = "输入密码"; }, 1500);
+        }
+    }
+}
+
+function unlockSystem() {
+    const lockScreen = document.getElementById('ios18-lock-screen');
+    // 解锁时画面轻轻放大并淡出，更符合 iOS 屏幕解构的丝滑感
+    lockScreen.style.transform = 'scale(1.1)';
+    lockScreen.style.opacity = '0';
+    setTimeout(() => { 
+        lockScreen.style.display = 'none'; 
+        lockScreenActive = false;
+        // 恢复初始状态防下次打开时锁屏面板错位或依然透明
+        lockScreen.style.transform = 'scale(1)';
+        lockScreen.style.opacity = '1';
+        document.getElementById('lock-pwd-panel').classList.remove('show');
+    }, 500);
+}
+
+
+// 拦截及覆写系统原有的启动控制流，让开屏画面结束后进入本锁屏
+const oldHideSplashEarly = window.hideSplashEarly || hideSplashEarly;
+window.hideSplashEarly = function() {
+    if(typeof oldHideSplashEarly === 'function') oldHideSplashEarly();
+    
+    // 开屏动画结束后，若没有被“激活锁”拦截，则唤起 iOS 锁屏界面
+    if (localStorage.getItem('ai_os_device_activated') === 'true' || 
+        !document.getElementById('sys-activation-screen') || 
+        document.getElementById('sys-activation-screen').style.display === 'none') {
+        initLockScreen();
+    }
+};
+
+// 同样拦截底层系统激活操作，一旦破解了激活锁，立即进入 iOS 锁屏
+const oldVerifyActivation = window.verifyActivation || verifyActivation;
+window.verifyActivation = function() {
+    if(typeof oldVerifyActivation === 'function') oldVerifyActivation();
+    if(localStorage.getItem('ai_os_device_activated') === 'true') {
+        setTimeout(initLockScreen, 500);
+    }
+};
+// 👆 新增结束 👆
+
 
 
 
