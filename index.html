@@ -4836,6 +4836,7 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
                 </div>
 
                 <div class="settings-content">
+                    
                     <div class="settings-group-title">全局设置</div>
                     <div class="settings-group">
                         <div class="setting-item">
@@ -5320,10 +5321,10 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
                 <div class="chat-info">
                     <h3 id="chat-name-display" onmousedown="nameTouchStart(event)" onmouseup="nameTouchEnd(event)" ontouchstart="nameTouchStart(event)" ontouchend="nameTouchEnd(event)" title="点击查看状态，长按修改备注" style="cursor: pointer; user-select: none;">AI <i class="fas fa-id-badge" style="font-size: 14px; color: var(--accent); margin-left: 5px; pointer-events: none;"></i></h3>
                     <p id="chat-status" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--accent);">在线</p>
-                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 4px;">
-                        <i class="fas fa-tv" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起看视频" onclick="openChatVideo()"></i>
-                        <i class="fas fa-gamepad" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起玩游戏" onclick="openChatGame()"></i>
-                    </div>
+                    <div id="chat-info-tools" style="display: flex; gap: 15px; justify-content: center; margin-top: 4px;">
+    <i class="fas fa-tv" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起看视频" onclick="openChatVideo()"></i>
+    <i class="fas fa-gamepad" style="font-size: 13px; color: var(--text-sub); cursor: pointer; opacity: 0.8;" title="一起玩游戏" onclick="openChatGame()"></i>
+</div>
                 </div>
             </div>
             <div style="display:flex; gap: 15px; align-items:center; margin-bottom: 4px;">
@@ -5575,6 +5576,15 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
                                 <span class="slider"></span>
                             </label>
                         </div>
+                        <!-- 粘贴下面这段代码 👇 -->
+<div class="setting-item" style="flex-direction: row; justify-content: space-between; align-items: center;">
+    <span class="setting-label">开启 iOS 18 锁屏界面</span>
+    <label class="switch">
+        <input type="checkbox" id="global-lockscreen-toggle" checked onchange="toggleLockScreen()">
+        <span class="slider"></span>
+    </label>
+</div>
+
                         <div class="setting-item" style="flex-direction: row; justify-content: space-between; align-items: center;">
                             <span class="setting-label">沉浸全屏 (隐藏顶部状态栏)</span>
                             <div style="background: var(--accent); color: #000; padding: 8px 16px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.9)'" onmouseup="this.style.transform='scale(1)'" onclick="toggleFullScreen()">切换全屏</div>
@@ -6296,6 +6306,12 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
                             <label class="switch"><input type="checkbox" id="ui-liquid-icon-toggle" checked onchange="updateUIParam('liquidIcon', this.checked)"><span class="slider"></span></label>
                         </div>
                     </div>
+                    <!-- 粘贴下面这段代码 👇 -->
+<div class="setting-item" style="flex-direction: row; justify-content: space-between; align-items: center; border-top: 0.5px solid var(--border-color);">
+    <span class="setting-label">显示聊天顶部的电视与游戏图标</span>
+    <label class="switch"><input type="checkbox" id="ui-show-chat-tools-toggle" checked onchange="updateUIParam('showChatTools', this.checked)"><span class="slider"></span></label>
+</div>
+
                                         <!-- 👇 新增：底部常驻栏 (Dock) 专属设置 👇 -->
                     <div class="settings-group-title">底部常驻栏 (Dock) 设置</div>
                     <div class="settings-group">
@@ -6473,6 +6489,17 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
                         <textarea id="css-layout-input" class="setting-textarea" placeholder="输入整体界面、背景、顶部栏相关 CSS...&#10;顶部栏类名：.chat-header" style="height: 140px; font-family: monospace; font-size: 12px; line-height: 1.5;" oninput="updateCustomCSS()"></textarea>
                     </div>
 
+                    <!-- 👇 新增：4. 状态面板 CSS 代码 👇 -->
+                    <div class="settings-group-title" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
+                        <span>4. 状态面板 CSS 代码 (Status Panel)</span>
+                        <span style="font-size: 11px; color: var(--accent); cursor: pointer; padding-bottom: 2px;" onclick="document.getElementById('css-panel-input').value='/* 状态面板主体毛玻璃 */\n.char-status-panel {\n  background: rgba(20, 20, 25, 0.85);\n  border: 1px solid rgba(255,105,180,0.5);\n  box-shadow: 0 0 40px rgba(255,105,180,0.2);\n}\n/* 状态条目容器 */\n.csp-item {\n  background: rgba(255,105,180,0.1);\n  border: 1px dashed rgba(255,105,180,0.3);\n}\n/* 标签与具体内容 */\n.csp-label { color: #ff69b4; }\n.csp-val { color: #fff; font-weight: bold; }'; updateCustomCSS();"><i class="fas fa-magic"></i> 填入参考模板</span>
+                    </div>
+                    <div class="settings-group">
+                        <textarea id="css-panel-input" class="setting-textarea" placeholder="输入角色私密状态面板相关的 CSS...&#10;核心类名：.char-status-panel, .csp-item, .csp-label, .csp-val" style="height: 140px; font-family: monospace; font-size: 12px; line-height: 1.5;" oninput="updateCustomCSS()"></textarea>
+                    </div>
+                    <!-- 👆 新增结束 👆 -->
+
+
 
 <!-- 修改部分 2: JavaScript 中新增 updateCustomCSS 函数，用于实时渲染用户输入的 CSS -->
 
@@ -6492,7 +6519,7 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
                         <div class="del-btn" onclick="resetUIParams()" style="width: 100%; background: rgba(255,255,255,0.05); color: #888;">恢复默认</div>
                     </div>
                 </div> <!-- 👈 补回的闭合标签 settings-content -->
-                <div id="beauty-toast" class="beauty-toast">设置已持久化保存 ✓</div>
+                <div id="beauty-toast" class="beauty-toast"></div>
             </div>
 
 
@@ -6507,26 +6534,37 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
                 </div>
             </div>
 
-                       <!-- 线下约会 App -->
+                                   <!-- 线下约会 App -->
             <div id="heart-chat-app" class="app-view">
                 <input type="file" id="heart-bg-upload" accept="image/*" style="display:none;" onchange="handleHeartBg(event)">
                 <div class="chat-header glass-effect">
                     <div class="chat-header-left">
-                        <i class="fas fa-chevron-left" onclick="goBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
-                        <div class="chat-info"><h3 id="heart-char-name">线下约会</h3><p>面对面互动叙事</p></div>
+                        <i class="fas fa-chevron-left" onclick="handleHeartAppBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
+                        <div class="chat-info"><h3 id="heart-char-name">线下约会</h3><p id="heart-guests-info">面对面互动叙事</p></div>
                     </div>
 
                     <div style="display:flex; gap: 15px; align-items:center;">
+                        <!-- 👇 新增：邀请角色、查看渲染面板 -->
+                        <i class="fas fa-user-plus" style="color:var(--accent); font-size: 18px; cursor: pointer;" onclick="promptInviteToHeart()" title="邀请其他角色加入约会"></i>
+                        <i class="fas fa-code" id="heart-html-toggle-btn" style="color:var(--text-sub); font-size: 18px; cursor: pointer; display:none;" onclick="toggleHeartHtmlView()" title="切换交互场景面板"></i>
                         <i class="fas fa-sliders-h" style="color:var(--accent); font-size: 18px; cursor: pointer;" onclick="openHeartSettings()" title="排版设置"></i>
                         <i class="fas fa-image" style="color:var(--accent); font-size: 18px; cursor: pointer;" onclick="document.getElementById('heart-bg-upload').click()" title="更换剧情背景"></i>
                     </div>
                 </div>
+                
+                                <!-- 👇 增强：代码渲染沙盒 (高级毛玻璃 + 透明背景交互) -->
+                <div id="heart-html-view" class="glass-effect" style="display:none; position:absolute; top:85px; left:0; width:100%; height:calc(100% - 150px); background:rgba(0,0,0,0.6); z-index: 20; overflow:hidden; border-radius: 20px; box-shadow: inset 0 0 20px rgba(255,255,255,0.1); animation: fadeIn 0.3s ease;">
+                    <iframe id="heart-html-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" style="width:100%; height:100%; border:none; background:transparent;"></iframe>
+                </div>
+
+                
                 <div id="heart-container" class="scrollable" style="flex:1; padding: 25px 20px; z-index: 5;"><div class="novel-intro" style="color: var(--text-sub); text-align: center; font-size: 13px; margin-bottom: 30px; letter-spacing: 1px;">—— 故事从这里开始 ——</div></div>
-                <div class="chat-input-area glass-effect">
+                <div class="chat-input-area glass-effect" style="z-index: 25;">
                     <input type="text" class="chat-input" id="heart-input" placeholder="输入你的行动或对话..." onkeydown="if(event.key==='Enter') sendHeartMessage()">
                     <i class="fas fa-pen-nib" style="color: var(--accent); font-size: 24px; cursor: pointer; margin-left: 10px;" onclick="sendHeartMessage()"></i>
                 </div>
             </div>
+
             
                         
 
@@ -9165,6 +9203,13 @@ window.fetchTtsModels = async function() { return; };
         const hbToggle = document.getElementById('global-homebar-toggle');
         if(hbToggle) hbToggle.checked = globalAPI.enableHomeBar;
         applyUIBarsState();
+        // 👇👇👇 就在这里加入锁屏开关的回显 👇👇👇
+        const lockscreenToggle = document.getElementById('global-lockscreen-toggle');
+        if(lockscreenToggle) {
+            lockscreenToggle.checked = (globalAPI.enableLockScreen !== false);
+        }
+        // 👆👆👆 加入完毕 👆👆👆
+
 
                 // 👇 回显语音开关面板 👇
         if(typeof globalAPI.enableTTS !== 'undefined' && document.getElementById('global-tts-toggle')) {
@@ -9566,6 +9611,8 @@ function openChatWith(id) {
     function loadCharacterState(id, isFromHub = false) {
         if(activeCharId && activeCharId !== id) forceSyncChatCache();
         activeCharId = id; localStorage.setItem('ai_os_active_char_id', id); const char = characters.find(c => c.id === id);
+        loadMomentsData(); // 👈 新增：切换角色时，加载该角色独立的朋友圈数据
+
         if(!char) return;
         
         if(typeof char.useActionDesc === 'undefined') char.useActionDesc = false;
@@ -12037,6 +12084,16 @@ function cancelQuote() {
 
     // --- 实时状态 App 交互逻辑 ---
     document.addEventListener('DOMContentLoaded', function() {
+
+    // 👇 修复：开机自动读取并应用自定义字体 👇
+if (localStorage.getItem('ai_os_font_enabled') === 'true') {
+    getImageFromDB('ai_os_custom_font').then(fontB64 => {
+        if (fontB64 && typeof applyCustomFont === 'function') {
+            applyCustomFont(fontB64);
+        }
+    });
+}
+
         const statusApp = document.getElementById('status-app');
         if (!statusApp) return;
 
@@ -12068,9 +12125,9 @@ function cancelQuote() {
                  // ==========================================
     // 🎨 全局美化中心核心逻辑 (强力防阻塞版)
     // ==========================================
-            let uiSettings = { 
+             let uiSettings = { 
         iconRadius: 20, glassBlur: 25, iconScale: 0.85, bubbleRadius: 20, bubbleOpacity: 0.92, 
-        cssBubble: "", cssInputBar: "", cssLayout: "", liquidTime: true, timeColor: "#ffffff", 
+        cssBubble: "", cssInputBar: "", cssLayout: "", cssPanel: "", liquidTime: true, timeColor: "#ffffff", // 👈 这里加上了 cssPanel: ""
         liquidIcon: true, customIconColor: false, iconBgColor: "#ffffff", iconBgOpacity: 0.15, 
         iconColor: "#ffffff", iconBorderColor: "#ffffff", timeSize: 56, timeWeight: 200,
         timeOpacity: 1.0, iconShadow: true, hideTimePanel: true,
@@ -12178,6 +12235,13 @@ function cancelQuote() {
             document.body.classList.remove('hide-dock-bg');
         }
 
+        // 控制聊天顶部工具图标显示
+const chatTools = document.getElementById('chat-info-tools');
+if(chatTools) {
+    chatTools.style.display = uiSettings.showChatTools !== false ? 'flex' : 'none';
+}
+
+
 
         // ======= 悬浮球样式动态覆盖 =======
         root.style.setProperty('--at-size', `${uiSettings.atSize || 60}px`);
@@ -12268,6 +12332,8 @@ function cancelQuote() {
                 uiSettings.cssBubble = parsedCss.bubble || "";
                 uiSettings.cssInputBar = parsedCss.inputBar || "";
                 uiSettings.cssLayout = parsedCss.layout || "";
+                                uiSettings.cssPanel = parsedCss.panel || ""; // 👈 新增
+
                 
                 applyUISettings(); // 读到巨型 CSS 后再追加一次渲染
                 
@@ -12275,6 +12341,8 @@ function cancelQuote() {
                 setVal('css-bubble-input', uiSettings.cssBubble);
                 setVal('css-inputbar-input', uiSettings.cssInputBar);
                 setVal('css-layout-input', uiSettings.cssLayout);
+                                setVal('css-panel-input', uiSettings.cssPanel); // 👈 新增
+
             }
         } catch(e) {
             console.log("不需要加载巨型 CSS 或数据库已被拦截");
@@ -12319,6 +12387,8 @@ function cancelQuote() {
         setCheck('ui-dock-bg-toggle', uiSettings.dockBgVisible);
         setVal('ui-dock-blur-input', uiSettings.dockBlur); 
         setText('val-dock-blur', uiSettings.dockBlur);
+        setCheck('ui-show-chat-tools-toggle', uiSettings.showChatTools !== false);
+
 
 
         setVal('ui-time-size-input', uiSettings.timeSize); setText('val-time-size', uiSettings.timeSize);
@@ -12363,8 +12433,13 @@ function cancelQuote() {
         uiSettings.cssBubble = document.getElementById('css-bubble-input').value;
         uiSettings.cssInputBar = document.getElementById('css-inputbar-input').value;
         uiSettings.cssLayout = document.getElementById('css-layout-input').value;
+                uiSettings.cssPanel = document.getElementById('css-panel-input') ? document.getElementById('css-panel-input').value : ''; // 👈 新增
+
 
         btn.style.transform = 'scale(0.95)'; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在保存...';
+
+         // 然后才去试图存占空间的 CSS 文本
+            const cssData = { bubble: uiSettings.cssBubble, inputBar: uiSettings.cssInputBar, layout: uiSettings.cssLayout, panel: uiSettings.cssPanel }; // 👈 新增 panel 键
 
         // 👑 终极修正：优先秒存基础设定到最高级别的系统缓存！
         const lightSettings = { ...uiSettings };
@@ -12396,6 +12471,8 @@ function cancelQuote() {
         uiSettings.cssBubble = document.getElementById('css-bubble-input').value;
         uiSettings.cssInputBar = document.getElementById('css-inputbar-input').value;
         uiSettings.cssLayout = document.getElementById('css-layout-input').value;
+                uiSettings.cssPanel = document.getElementById('css-panel-input') ? document.getElementById('css-panel-input').value : '';
+
 
         const iconTextConfig = JSON.parse(localStorage.getItem('ai_os_icon_text_config')) || {};
         const widgetStyles = JSON.parse(localStorage.getItem('ai_os_widget_styles')) || {};
@@ -12488,6 +12565,7 @@ function cancelQuote() {
                 }
 
                 uiSettings = Object.assign(uiSettings, imported.uiSettings);
+                
                 document.getElementById('css-bubble-input').value = uiSettings.cssBubble || "";
                 document.getElementById('css-inputbar-input').value = uiSettings.cssInputBar || "";
                 document.getElementById('css-layout-input').value = uiSettings.cssLayout || "";
@@ -13118,6 +13196,96 @@ function cancelQuote() {
     let heartHistory = [];
     let heartTouchTimer;
     let selectedHeartMsgIndex = null;
+        let heartGuests = []; // 存放被邀请加入约会的其他角色ID
+
+    // 专属返回处理
+    window.handleHeartAppBack = function() {
+        if (document.getElementById('heart-html-view').style.display === 'block') {
+            toggleHeartHtmlView();
+        } else {
+            goBack();
+        }
+    };
+
+    // 切换 HTML 渲染视图
+    window.toggleHeartHtmlView = function() {
+        const view = document.getElementById('heart-html-view');
+        const btn = document.getElementById('heart-html-toggle-btn');
+        if (view.style.display === 'none') {
+            view.style.display = 'block';
+            btn.style.color = 'var(--accent)';
+        } else {
+            view.style.display = 'none';
+            btn.style.color = 'var(--text-sub)';
+        }
+    };
+
+    // 渲染 AI 输出的 HTML 代码
+    function renderHeartHtml(code) {
+        const iframe = document.getElementById('heart-html-iframe');
+        const view = document.getElementById('heart-html-view');
+        const btn = document.getElementById('heart-html-toggle-btn');
+        
+        iframe.srcdoc = code; // 注入代码
+        view.style.display = 'block'; // 自动弹出版面
+        btn.style.display = 'block';
+        btn.style.color = 'var(--accent)';
+    }
+
+    // 处理约会时的并发短信发送
+    function sendSmsFromHeart(charId, content) {
+        const charInfo = characters.find(c => c.id === charId);
+        if (!charInfo) return;
+        
+        let bgHistory = JSON.parse(localStorage.getItem(`ai_os_chat_${charId}`) || '[]');
+        let timeFormatted = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        bgHistory.push({ role: 'char', content: content, isHtml: false, time: timeFormatted, rawApiContent: content, msgType: 'text' });
+        localStorage.setItem(`ai_os_chat_${charId}`, JSON.stringify(bgHistory));
+        
+        // 触发系统弹窗，让用户即使在约会App也能看到顶部消息横幅
+        showOsNotification(charInfo.name, content.replace(/<[^>]*>/g, '').trim(), charInfo.avatar, 'chat-app');
+    }
+
+    // 邀请其他人加入约会
+    window.promptInviteToHeart = async function() {
+        const charOptions = characters.filter(c => c.id !== activeCharId && !heartGuests.includes(c.id));
+        if (charOptions.length === 0) return sysAlert("提示", "没有可以邀请的其他角色了！");
+        
+        const names = charOptions.map((c, i) => `【${i+1}】${c.name}`).join('\n');
+        const choice = await sysPrompt("邀请加入约会", `输入编号邀请TA来到你们的约会现场：\n${names}`);
+        if (!choice || isNaN(choice)) return;
+        
+        const idx = parseInt(choice) - 1;
+        const targetChar = charOptions[idx];
+        
+        if (targetChar) {
+            heartGuests.push(targetChar.id);
+            document.getElementById('heart-guests-info').innerText = `当前在场: ${heartGuests.length + 1} 人`;
+            
+            // 往对应角色的短信里发送一张邀请卡片
+            const inviteHtml = `
+                <div class="x-share-card" style="background: rgba(255, 105, 180, 0.15); border-color: #ff69b4;">
+                    <div class="xs-header" style="color: #ff69b4;"><i class="fas fa-map-marker-alt"></i> 约会邀请函</div>
+                    <div class="xs-content" style="font-size: 13px; margin-top:8px;">
+                        <div style="color:#fff; font-weight:bold;">我邀请你立刻来找我们！</div>
+                        <div style="opacity:0.8; margin-top:4px;">(点击接受邀约)</div>
+                    </div>
+                </div>
+            `;
+            const rawText = `[系统交互：用户正在线下和别人约会，并向你发送了定位邀请你立刻过来加入他们！你可以选择答应赴约（赴约后你的发言将直接出现在线下约会APP中），也可以在短信里拒绝/吃醋！]`;
+            
+            let targetHistory = JSON.parse(localStorage.getItem(`ai_os_chat_${targetChar.id}`) || '[]');
+            targetHistory.push({ role: 'user', content: inviteHtml, isHtml: true, time: new Date().toLocaleString(), rawApiContent: rawText, msgType: 'x-share' });
+            localStorage.setItem(`ai_os_chat_${targetChar.id}`, JSON.stringify(targetHistory));
+            
+            // 将此事件注入约会的本地历史中，引起当前约会对象的注意
+            heartHistory.push({ role: 'user', content: `(我刚刚用手机向 ${targetChar.name} 发送了定位，邀请TA也过来一起玩)` });
+            renderHeartHistory();
+            setTimeout(() => triggerHeartAIResponse(), 800);
+        }
+    };
+
     
     // 新增 writingStyle 字段
     let heartSettings = JSON.parse(localStorage.getItem('ai_os_heart_settings')) || { darkness: 0.6, fontSize: 16, lineHeight: 1.8, spacing: 1, writingStyle: "" };
@@ -13233,27 +13401,64 @@ function cancelQuote() {
                 // ✨ 新增：提取并动态拼接文风提示词
         let styleInjection = heartSettings.writingStyle ? `\n7. 【文风/特殊设定强制优先级】：请务必遵循以下特殊文风及场景要求进行撰写 —— ${heartSettings.writingStyle}` : "";
 
-                // 👇 新增：短信记忆互通
+                        // 👇 1. 短信记忆深度无缝互通 (增强版) 👇
         let smsInjectBlock = "";
         const smsKey = `ai_os_chat_${activeCharId}`;
         const totalSms = JSON.parse(localStorage.getItem(smsKey) || '[]');
         if (totalSms && totalSms.length > 0) {
-            const recentSms = totalSms.filter(m => m.role !== 'system').slice(-6).map(m => `${m.role === 'user' ? '我' : activeChar.name}: ${m.rawApiContent || m.content}`).join('\n');
-            smsInjectBlock = `\n\n【手机短信记忆互通】：\n你们近期在手机短信上的聊天记录如下：\n${recentSms}\n请在这次线下约会中，自然地承接你们在手机上聊过的话题。`;
+            // 提取最近12条真实文字聊天记录，过滤掉系统提示和图片代码
+            const recentSms = totalSms.filter(m => m.role !== 'system' && m.msgType === 'text')
+                                      .slice(-12)
+                                      .map(m => `${m.role === 'user' ? '我' : activeChar.name}: ${m.rawApiContent || m.content}`).join('\n');
+            if (recentSms.trim()) {
+                smsInjectBlock = `\n\n【📱手机短信记忆无缝同步】：\n你们在见面之前，在手机短信上的最新聊天记录如下：\n${recentSms}\n【最高指令】：你现在已经和用户在线下见面了！请务必在脑海中承接上述短信的情绪、话题和约会约定。如果短信里提到了某件事、某个物品，线下见面时请自然地表现出来，绝不能像失忆一样！`;
+            }
         }
 
-        // 👇 世界书感知引擎 👇
+        // 👇 2. 世界书感知引擎 👇
         const lastUserMsgForRAG = heartHistory.length > 0 ? heartHistory[heartHistory.length - 1].content : "";
         const wbContext = typeof getSmartWorldbookContext === 'function' ? getSmartWorldbookContext(lastUserMsgForRAG.replace(/<[^>]*>/g, ''), activeCharId) : "";
         let wbInjectBlock = wbContext ? `\n\n${wbContext}` : "";
 
+        // 👇 3. 新增：线下约会接入向量知识库(RAG)深层记忆检索 👇
+        let ragInjectBlock = "";
+        const isVectorEnabled = document.getElementById('global-vector-toggle')?.checked || (typeof vectorConfig !== 'undefined' && vectorConfig.enabled);
+        if (lastUserMsgForRAG && isVectorEnabled) {
+            try {
+                if (typeof retrieveRelatedMemories === 'function') {
+                    const ragBlock = await retrieveRelatedMemories(lastUserMsgForRAG.replace(/<[^>]*>/g, ''));
+                    if (ragBlock) ragInjectBlock = ragBlock; // 如果检索到深层记忆，加入约会上下文
+                }
+            } catch(e) {}
+        }
+
+        // 👇 4. 组装邀约宾客情报
+        let guestInfo = "";
+        if (heartGuests.length > 0) {
+            const guestNames = heartGuests.map(id => {
+                const c = characters.find(char => char.id === id);
+                return c ? `${c.name} (性格: ${c.prompt})` : "";
+            }).join('；');
+            guestInfo = `\n【当前在场其他角色】：\n${guestNames}\n(请在接下来的剧情描写中，一人分饰多角，自然地代入并写出他们的动作和台词！)`;
+        }
+
+        // 👇 5. 组装黑科技指令提示词
+        const featurePrompt = `
+【黑科技交互系统（最高权限）】：
+1. 📱并发短信通知：在约会时，如果你（或在场其他角色）想偷偷给用户发手机消息，请在回复中包含 \`$$SMS:你想发的话$$\`。用户的手机会真实弹出系统通知横幅！
+2. 💻场景动态渲染 (Artifacts)：如果你想为当前约会场景生成一个可交互的界面（比如：咖啡厅的菜单、解谜小游戏的网页、情书、或者是送给用户的虚拟礼物代码），请严格使用 \`\`\`html 和 \`\`\` 包裹你的前端代码。`;
+
+        // 👇 6. 重组系统提示词 (注入所有增强记忆)
         const heartSystemPrompt = `【线下约会模式开启：轻小说叙事】
 1. 你现在不是在通过手机发短信，而是和用户在线下（面对面）真实相处。
-2. 你的回复必须是大段落的、充满细节的描写（环境、氛围、动作、心理），以推动真实的线下相处剧情。
-3. 每次回复篇幅要求在300-800字之间。
-4. 使用文学化的语言，生动刻画你（${activeChar.name}）与用户之间的情感互动。
-5. 必须保留你原本的人设：${activeChar.prompt}。
-6. 所有的对话必须自然地嵌入在描写之中。${styleInjection}${smsInjectBlock}${wbInjectBlock}`;
+2. 每次回复必须是大段落的细节描写（环境、氛围、动作、心理），以推动真实的线下剧情。
+3. 使用文学化的语言，生动刻画情感互动。
+4. 必须保留你原本的人设：${activeChar.prompt}。
+5. 所有的对话必须自然地嵌入在描写之中。${guestInfo}${featurePrompt}${styleInjection}${smsInjectBlock}${wbInjectBlock}${ragInjectBlock}`;
+
+
+
+
 
 
 
@@ -13281,6 +13486,15 @@ function cancelQuote() {
             heartHistory.push({ role: 'char', content: reply });
             localStorage.setItem(`ai_os_heart_${activeCharId}`, JSON.stringify(heartHistory));
             renderHeartHistory();
+            // 👇 新增：每在线下约会互动 10 次，自动将这段约会剧情沉淀为长久的核心记忆
+            if (heartHistory.length > 0 && heartHistory.length % 10 === 0) {
+                setTimeout(() => {
+                    if (typeof generateAutoDiary === 'function') {
+                        // 借用底层的记忆总结功能，把约会记录丢进去浓缩
+                        generateAutoDiary(activeChar, heartHistory.slice(-10));
+                    }
+                }, 2000);
+            }
         } catch (e) {
             document.getElementById(typingId).innerText = "❌ 剧情连接中断...";
         }
@@ -13334,6 +13548,10 @@ function cancelQuote() {
                     getImageFromDB(savedBg.replace('idb://', '')).then(r => { if(r) document.getElementById('heart-chat-app').style.backgroundImage = `url('${r}')`; });
                 } else {
                     document.getElementById('heart-chat-app').style.backgroundImage = `url('${savedBg}')`;
+                    // 👇 新增初始化状态
+            document.getElementById('heart-html-view').style.display = 'none';
+            document.getElementById('heart-html-toggle-btn').style.display = 'none';
+            document.getElementById('heart-guests-info').innerText = heartGuests.length > 0 ? `当前在场: ${heartGuests.length + 1} 人` : '面对面互动叙事';
                 }
             }
 
@@ -13907,6 +14125,54 @@ if (document.hidden) return;
             });
             const data = await res.json();
             let reply = data.choices[0].message.content;
+                        // 👇 新增：提取 AI 返回的 HTML 代码并进行高级前端渲染
+            const htmlRegex = /```html\s*([\s\S]*?)\s*```/i;
+            const htmlMatch = reply.match(htmlRegex);
+            if (htmlMatch) {
+                const injectedHtml = htmlMatch[1];
+                // 自动注入让页面居中、支持高级交互和动画的基础CSS框架
+                const baseHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                <style>
+                    body { margin:0; padding:20px; display:flex; justify-content:center; align-items:center; min-height:100vh; background:transparent; font-family: -apple-system, "SF Pro Text", sans-serif; perspective: 1000px; color: #fff; overflow-x: hidden;}
+                    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+                    /* 默认提供的高级信封/信件/互动卡片基础动画 */
+                    .interactive-card {
+                        background: rgba(255, 255, 255, 0.95);
+                        color: #333;
+                        padding: 25px;
+                        border-radius: 20px;
+                        box-shadow: 0 15px 50px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,1);
+                        transform: translateY(20px);
+                        opacity: 0;
+                        animation: popUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+                        cursor: pointer;
+                        transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        max-width: 90vw;
+                        width: 100%;
+                    }
+                    .interactive-card:active { transform: scale(0.96); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+                    @keyframes popUp { to { transform: translateY(0); opacity: 1; } }
+                    
+                    /* 给AI写按钮用的漂亮样式 */
+                    .action-btn { background: #ff6b81; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; display: inline-block; margin-top: 15px; box-shadow: 0 4px 15px rgba(255,107,129,0.4); transition: transform 0.1s;}
+                    .action-btn:active { transform: scale(0.9); }
+                </style>
+                </head>
+                <body>
+                    ${injectedHtml}
+                </body>
+                </html>
+                `;
+                renderHeartHtml(baseHtml);
+                // 把提取出的 HTML 代码块替换为系统提示气泡，避免干扰正常阅读
+                reply = reply.replace(htmlRegex, '<div style="color:var(--accent); font-size:12px; margin: 8px 0; font-weight:bold;"><i class="fas fa-magic"></i> 已生成可交互场景，请点击右上角【&lt;/&gt;】展开查看。</div>');
+            }
+            // 👆 新增结束
+
             
             bubble.innerText = reply;
             
@@ -13967,8 +14233,20 @@ if (document.hidden) return;
         // ==========================================
     // 🌟 极致仿 WeChat 朋友圈引擎 (支持 AI 发图与评论互动)
     // ==========================================
-    let momentsData = JSON.parse(localStorage.getItem('ai_os_moments')) || [];
-    let currentMomentCommentIdx = null;
+   let momentsData = [];
+
+// 新增独立加载函数
+function loadMomentsData() {
+    if (!activeCharId) return;
+    const saved = localStorage.getItem(`ai_os_moments_${activeCharId}`);
+    momentsData = saved ? JSON.parse(saved) : [];
+}
+
+// 覆写原有的 saveMoments，绑定到当前角色
+function saveMoments() {
+    localStorage.setItem(`ai_os_moments_${activeCharId}`, JSON.stringify(momentsData));
+}
+
 
     // 👇 新增：获取当前真实时间的函数
     function getMomentTimeStr() {
@@ -13989,8 +14267,8 @@ if (document.hidden) return;
 
     // 1. 初始化朋友圈
     function initMoments() {
-        const bg = localStorage.getItem('ai_os_moments_bg');
-        if (bg && bg.startsWith('idb://')) {
+  const bg = localStorage.getItem(`ai_os_moments_bg_${activeCharId}`);
+
             getImageFromDB(bg.replace('idb://', '')).then(r => { 
                 if (r) document.getElementById('moments-cover-img').src = r; 
             });
@@ -14015,7 +14293,7 @@ if (document.hidden) return;
                 document.querySelectorAll('.moment-action-panel').forEach(p => p.classList.remove('show'));
             }
         });
-    }
+    
 
     // 2. 背景上传
     async function handleMomentsBgUpload(e) {
@@ -14024,8 +14302,8 @@ if (document.hidden) return;
         reader.onload = async function(event) {
             const imgId = 'mbg_' + Date.now();
             await saveImageToDB(imgId, event.target.result);
-            localStorage.setItem('ai_os_moments_bg', 'idb://' + imgId);
-            document.getElementById('moments-cover-img').src = event.target.result;
+   localStorage.setItem(`ai_os_moments_bg_${activeCharId}`, 'idb://' + imgId);
+lt;
         };
         reader.readAsDataURL(file); e.target.value = '';
     }
@@ -14222,14 +14500,16 @@ momentsData.unshift({ author: globalUser.name, text: text.trim(), time: getMomen
     }
 
     // 拦截拦截打开 App 事件，注入渲染
-    const _originalOpenAppMoments = openApp;
+        const _originalOpenAppMoments = openApp;
     openApp = function(appId) {
         _originalOpenAppMoments(appId);
         if(appId === 'moments-app') {
+            loadMomentsData(); // 👈 新增：确保打开时数据是最新的
             initMoments();
             renderMoments();
         }
     };
+
 
     // ==========================================
     // 小遥控 App (人体部位与拖拽校准系统)
@@ -17044,24 +17324,16 @@ ${isEnding ? "3. 这是整部小说的最后一章，请给出震撼、完美且
     });
 
     // 👇 强力修复：CSS 独立覆盖引擎，绝不干扰其他 APP 的气泡！
-    function updateCustomCSS() {
+        function updateCustomCSS() {
         if(typeof uiSettings === 'undefined') window.uiSettings = {};
         uiSettings.cssBubble = document.getElementById('css-bubble-input') ? document.getElementById('css-bubble-input').value : '';
         uiSettings.cssInputBar = document.getElementById('css-inputbar-input') ? document.getElementById('css-inputbar-input').value : '';
         uiSettings.cssLayout = document.getElementById('css-layout-input') ? document.getElementById('css-layout-input').value : '';
+        uiSettings.cssPanel = document.getElementById('css-panel-input') ? document.getElementById('css-panel-input').value : ''; // 👈 新增
         applyUserInjectedCSS();
     }
 
-            // 👇 强力修复：CSS 独立覆盖引擎，绝不干扰其他 APP 的气泡，同时具备上帝级统治力！
-    function updateCustomCSS() {
-        if(typeof uiSettings === 'undefined') window.uiSettings = {};
-        uiSettings.cssBubble = document.getElementById('css-bubble-input') ? document.getElementById('css-bubble-input').value : '';
-        uiSettings.cssInputBar = document.getElementById('css-inputbar-input') ? document.getElementById('css-inputbar-input').value : '';
-        uiSettings.cssLayout = document.getElementById('css-layout-input') ? document.getElementById('css-layout-input').value : '';
-        applyUserInjectedCSS();
-    }
-
-        function applyUserInjectedCSS() {
+    function applyUserInjectedCSS() {
         let styleEl = document.getElementById('user-injected-css');
         if (!styleEl) {
             styleEl = document.createElement('style');
@@ -17074,7 +17346,8 @@ ${isEnding ? "3. 这是整部小说的最后一章，请给出震撼、完美且
         // 核心提权：利用 :is() 伪类完美包裹多个容器，防止逗号分隔符导致的权重溢出断层
         const rootSelector = ':is(html body #chat-app#chat-app#chat-app, html body #riddle-app#riddle-app#riddle-app)';
     
-        const process = (css, defaultSelector) => {
+        // 接收自定义的作用域前缀
+        const process = (css, defaultSelector, customRootSelector = rootSelector) => {
             if (!css || !css.trim()) return '';
             
             if (css.includes('{')) {
@@ -17088,8 +17361,9 @@ ${isEnding ? "3. 这是整部小说的最后一章，请给出震撼、完美且
                     let newSelectors = selectors.split(',').map(sel => {
                         sel = sel.trim();
                         if (!sel) return '';
-                        if (sel.includes('#chat-app') || sel.includes('#riddle-app')) return sel;
-                        return `${rootSelector} ${sel}`;
+                        // 👇 容忍特殊隔离类名直接生效
+                        if (sel.includes('#chat-app') || sel.includes('#riddle-app') || sel.includes('#char-status-panel-overlay')) return sel;
+                        return `${customRootSelector} ${sel}`;
                     }).join(', ');
                     
                     return `${brace}\n${newSelectors} ${openBrace}`;
@@ -17117,8 +17391,12 @@ ${isEnding ? "3. 这是整部小说的最后一章，请给出震撼、完美且
         customCSS += process(uiSettings.cssInputBar, `${rootSelector} .chat-input-area, ${rootSelector} .chat-input`);
         customCSS += process(uiSettings.cssLayout, rootSelector);
         
+        // 👇 新增：将状态面板独立注入，因为它的 HTML 不在 chat-app 内，而在最外层
+        customCSS += process(uiSettings.cssPanel, `html body #char-status-panel-overlay .char-status-panel`, `html body #char-status-panel-overlay`);
+        
         styleEl.innerHTML = customCSS;
     }
+
 
 
 
@@ -18026,7 +18304,20 @@ async function triggerAIResponse() {
         const totalHeart = JSON.parse(localStorage.getItem(`ai_os_heart_${activeCharId}`) || '[]');
         if (totalHeart.length > 0) contextBlocks.push(`【线下约会记忆】：\n近期互动：\n${totalHeart.slice(-3).map(m => `${m.role === 'user' ? '用户' : activeChar.name}: ${m.content.substring(0, 50)}...`).join('\n')}`);
         
-        if (typeof momentsData !== 'undefined' && momentsData.length > 0) contextBlocks.push(`【朋友圈动态】：\n最新动态：\n${momentsData.slice(0, 3).map((m, i) => `[${m.author}]: "${m.text}"`).join('\n')}`);
+// 提取所有角色的朋友圈供 AI 吃瓜联动
+let allMomentsContext = "";
+characters.forEach(c => {
+    let cMoments = JSON.parse(localStorage.getItem(`ai_os_moments_${c.id}`) || '[]');
+    if (cMoments.length > 0) {
+        // 提取该角色最新的 1~2 条朋友圈
+        let recent = cMoments.slice(0, 2).map(m => `"${m.text}"`).join(' | ');
+        allMomentsContext += `[${c.name} 的朋友圈]: ${recent}\n`;
+    }
+});
+
+if (allMomentsContext.trim()) {
+    contextBlocks.push(`【朋友圈情报网 (吃瓜视角)】：\n你可以看到手机里所有人的近期动态：\n${allMomentsContext}\n(注：如果是别人的动态，你可以作为吃瓜群众自然地和我聊起这些八卦；如果是你自己的动态，你可以和我讨论底下的评论和点赞，增加互动可玩性！)`);
+}
 
         contextBlocks.push(`【宠物联动系统】：\n宠物“${petData.name || '小宠物'}”状态：LV.${petData.level}，饱食 ${petData.hunger}/100，心情 ${petData.mood}/100。\n指令：喂食$$PET_ACTION:feed$$，玩耍$$PET_ACTION:play$$，出门$$PET_ACTION:explore$$。`);
         
@@ -23900,8 +24191,16 @@ async function triggerAIResponse() {
             }
         }
         
+        // 👇 替换为增强版线下约会记忆同步 👇
         const totalHeart = JSON.parse(localStorage.getItem(`ai_os_heart_${targetCharId}`) || '[]');
-        if (totalHeart.length > 0) contextBlocks.push(`【线下约会记忆】：\n近期互动：\n${totalHeart.slice(-3).map(m => `${m.role === 'user' ? '用户' : activeChar.name}: ${m.content.substring(0, 50)}...`).join('\n')}`);
+        if (totalHeart.length > 0) {
+            // 提取最近 10 次的线下约会深度剧情描写
+            const recentHeart = totalHeart.slice(-10).map(m => `${m.role === 'user' ? '用户' : activeChar.name}: ${m.content.replace(/<[^>]*>/g, '')}`).join('\n');
+            contextBlocks.push(`【👫线下约会/相处记忆无缝同步】：
+你们刚刚经历了一段真实的线下相处（约会），详细过程如下：
+${recentHeart}
+【最高指令】：你们现在分开了，回到了手机短信聊天。请务必在短信里自然地承接刚结束的线下约会氛围！可以回味刚才发生的细节，可以表达意犹未尽，绝对不能表现出失忆或割裂感！`);
+        }
         
         if (typeof momentsData !== 'undefined' && momentsData.length > 0) contextBlocks.push(`【朋友圈动态】：\n最新动态：\n${momentsData.slice(0, 3).map((m, i) => `[${m.author}]: "${m.text}"`).join('\n')}`);
 
@@ -25616,11 +25915,14 @@ function unlockSystem() {
 }
 
 
-// 拦截及覆写系统原有的启动控制流，让开屏画面结束后进入本锁屏
+// 拦截及覆写系统原有的启动控制流
 const oldHideSplashEarly = window.hideSplashEarly || hideSplashEarly;
 window.hideSplashEarly = function() {
     if(typeof oldHideSplashEarly === 'function') oldHideSplashEarly();
     
+    // 如果用户关闭了锁屏，直接退出
+    if (globalAPI.enableLockScreen === false) return;
+
     // 开屏动画结束后，若没有被“激活锁”拦截，则唤起 iOS 锁屏界面
     if (localStorage.getItem('ai_os_device_activated') === 'true' || 
         !document.getElementById('sys-activation-screen') || 
@@ -25628,6 +25930,7 @@ window.hideSplashEarly = function() {
         initLockScreen();
     }
 };
+
 
 // 同样拦截底层系统激活操作，一旦破解了激活锁，立即进入 iOS 锁屏
 const oldVerifyActivation = window.verifyActivation || verifyActivation;
@@ -25638,6 +25941,14 @@ window.verifyActivation = function() {
     }
 };
 // 👆 新增结束 👆
+
+function toggleLockScreen() {
+    globalAPI.enableLockScreen = document.getElementById('global-lockscreen-toggle').checked;
+    localStorage.setItem('ai_os_global_api', JSON.stringify(globalAPI));
+}
+
+
+
 
 
 
