@@ -771,11 +771,49 @@
 
         /* --- 通讯录 --- */
         .contacts-header { padding: 60px 20px 20px; font-size: 28px; font-weight: bold; color: var(--text-main); background: var(--bg-glass-header); position: sticky; top: 0; z-index: 10; border-bottom: 0.5px solid var(--border-color);}
-        .my-card { display: flex; align-items: center; padding: 20px; background: var(--bg-panel); margin: 15px 20px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s;}
-        .my-card:active { transform: scale(0.96); }
-        .my-avatar { width: 60px; height: 60px; border-radius: 15px; background-size: cover; margin-right: 15px; }
-        .my-info h4 { color: var(--text-main); margin: 0 0 5px; font-size: 18px; }
-        .my-info p { color: var(--theme-mid); margin: 0; font-size: 13px; }
+        /* 移除拟态化，完美融入普通通讯录列表，同时修复头像展示 */
+.my-card { 
+    display: flex; 
+    align-items: center; 
+    padding: 15px 0 !important; 
+    margin: 0 15px !important; /* 调整外边距，与下方的通讯录列表严格对齐 */
+    background: transparent !important; 
+    border: none !important;
+    border-bottom: 0.5px solid var(--border-color) !important; 
+    border-radius: 0 !important; 
+    cursor: pointer; 
+    box-shadow: none !important; 
+    backdrop-filter: none !important; 
+    -webkit-backdrop-filter: none !important;
+    transition: background 0.2s, transform 0.2s;
+}
+
+/* 完美同步下方普通联系人的点击动效 */
+.my-card:active { 
+    opacity: 0.7; 
+    transform: scale(0.98); 
+    background: rgba(0,0,0,0.05) !important; 
+    border-radius: 12px !important; 
+    padding-left: 10px !important;
+}
+
+.my-avatar { 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 12px; 
+    margin-right: 15px; 
+    border: none !important; 
+    box-shadow: none !important;
+    /* 👇 核心修复：必须保留背景图覆盖属性，否则无法显示头像 */
+    background-size: cover !important; 
+    background-position: center !important; 
+    background-repeat: no-repeat !important;
+    flex-shrink: 0;
+}
+
+.my-info h4 { color: var(--text-main); font-size: 16px; margin: 0 0 4px; font-weight: bold; }
+.my-info p { color: var(--text-sub); font-size: 13px; margin: 0; }
+
         .contact-list { padding: 0 20px 80px; }
         .contact-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 0.5px solid var(--border-color); cursor: pointer; transition: background 0.2s, transform 0.2s;}
         .contact-item:active { opacity: 0.7; transform: scale(0.98); background: rgba(0,0,0,0.05); border-radius: 12px; padding-left: 10px;}
@@ -1204,19 +1242,184 @@ input:checked + .slider:before {
 
         #assistive-touch:active { transform: scale(0.9); opacity: 1; }
         #assistive-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 2999; display: none; opacity: 0; transition: opacity 0.2s ease; pointer-events: auto; }
-        #assistive-menu { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 290px; height: 290px; background: rgba(35, 35, 35, 0.75); backdrop-filter: blur(35px); border-radius: 35px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 0 1.5px rgba(255,255,255,0.1); z-index: 3001; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); padding: 20px; gap: 10px; }
-        #assistive-menu.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
-        .am-btn { display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; border-radius: 20px; cursor: pointer; transition: background 0.1s, transform 0.1s; }
-        .am-btn:active { background: rgba(255,255,255,0.15); transform: scale(0.92); }
-        .am-btn i { font-size: 26px; margin-bottom: 8px; color: rgba(255,255,255,0.9); }
-        .am-btn span { font-size: 12px; font-weight: 500; opacity: 0.9; }
-        .am-btn.am-home i { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+                                       /* ========================================== */
+        /* 🌟 辅助触控：高斯虚化背景 + 极致清透吸色水滴表盘 🌟 */
+        /* ========================================== */
+        
+        /* 1. 全局背景遮罩：深度虚化，将屏幕其他内容完全推入背景 */
+        #assistive-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 255, 255, 0.05); /* 极其微弱的亮色遮罩，不干扰吸色 */
+            backdrop-filter: blur(35px) saturate(120%); 
+            -webkit-backdrop-filter: blur(35px) saturate(120%);
+            z-index: 2999; 
+            display: none; 
+            opacity: 0; 
+            transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            pointer-events: auto; 
+        }
 
-        #gesture-pad { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(30, 30, 35, 0.85); backdrop-filter: blur(25px); z-index: 5000; display: none; flex-direction: column; justify-content: center; align-items: center; color: rgba(255,255,255,0.5); font-size: 18px; letter-spacing: 2px; animation: fadeIn 0.3s forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .gesture-indicator { width: 60px; height: 60px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; margin-bottom: 20px; position: relative; }
-        .gesture-indicator::after { content: ''; position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 15px var(--accent); animation: pulse 1.5s infinite;}
-        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(3); opacity: 0; } }
+        /* 2. 菜单主容器：彻底透明无底盘 */
+        #assistive-menu { 
+            position: absolute; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) scale(0.85); 
+            width: 310px; height: 310px; 
+            
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            
+            z-index: 3001; 
+            display: block; 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+
+        #assistive-menu.active { 
+            opacity: 1; 
+            pointer-events: auto; 
+            transform: translate(-50%, -50%) scale(1); 
+        }
+
+        /* 3. 环绕小圆：极致 3D 吸色液态水滴 */
+        .am-btn { 
+            position: absolute;
+            top: calc(50% - 30px);
+            left: calc(50% - 30px);
+            width: 60px; height: 60px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            
+            /* 💧 极高透明度的渐变，模拟水滴表面 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.02) 100%);
+            
+            /* 💧 降低模糊、拉高饱和：完美吸收并折射底层的颜色 */
+            backdrop-filter: blur(15px) saturate(250%) brightness(1.1);
+            -webkit-backdrop-filter: blur(15px) saturate(250%) brightness(1.1);
+            
+            border-radius: 50%; 
+            cursor: pointer; 
+            
+            /* 💧 极细折射边框 */
+            border: 0.5px solid rgba(255, 255, 255, 0.8);
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+            border-right-color: rgba(255, 255, 255, 0.2);
+            
+            /* 💧 3D 立体感核心：顶部高光 + 底部暗部反光 + 外部巨大悬浮阴影 */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 
+                        inset 0 4px 12px rgba(255, 255, 255, 0.9),
+                        inset 0 -4px 10px rgba(0, 0, 0, 0.04);
+            
+            color: var(--text-main); 
+            
+            --tx: 0px; --ty: 0px;
+            transform: translate(0, 0) scale(0); 
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 确保高透明度下内部文字和图标绝对清晰 */
+        .am-btn i { 
+            font-size: 20px; 
+            margin-bottom: 2px; 
+            color: #333; 
+            filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.9)); 
+        }
+        .am-btn span { 
+            font-size: 10px; 
+            font-weight: 700; 
+            color: #333;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9); 
+        }
+
+        /* 挤压水滴物理反馈 */
+        #assistive-menu.active .am-btn:active { 
+            background: rgba(255, 255, 255, 0.6); 
+            transform: translate(var(--tx), var(--ty)) scale(0.9); 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08), inset 0 2px 8px rgba(255, 255, 255, 1);
+        }
+        
+        /* 4. 核心中央大圆：主题色液态核心 */
+        .am-btn.am-home {
+            top: calc(50% - 42px);
+            left: calc(50% - 42px);
+            width: 84px; height: 84px; 
+            
+            /* 将系统强调色注入水滴中 */
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 50%, rgba(255,255,255,0.8)), color-mix(in srgb, var(--accent) 10%, rgba(255,255,255,0.1))) !important;
+            backdrop-filter: blur(20px) saturate(250%) brightness(1.15) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(250%) brightness(1.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            
+            box-shadow: 0 15px 40px color-mix(in srgb, var(--accent) 25%, rgba(0,0,0,0.15)), 
+                        inset 0 6px 15px rgba(255, 255, 255, 0.95),
+                        inset 0 -4px 10px color-mix(in srgb, var(--accent) 15%, rgba(0,0,0,0.1)) !important;
+            z-index: 10;
+        }
+        .am-btn.am-home i { color: #111 !important; font-size: 32px; filter: drop-shadow(0 2px 6px rgba(255,255,255,0.8)); }
+        .am-btn.am-home span { font-size: 11px; color: #111 !important; text-shadow: 0 1px 3px rgba(255,255,255,0.8); }
+
+        /* 5. 深色模式自适应：黑曜石透光水滴 */
+        :root:not(.light-mode) #assistive-overlay {
+            background: rgba(0, 0, 0, 0.35); /* 夜间稍微加深环境 */
+        }
+        :root:not(.light-mode) .am-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 0.5px solid rgba(255, 255, 255, 0.35);
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+            border-right-color: rgba(255, 255, 255, 0.05);
+            
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 
+                        inset 0 3px 8px rgba(255, 255, 255, 0.25),
+                        inset 0 -3px 8px rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.95);
+        }
+        :root:not(.light-mode) .am-btn i { 
+            color: rgba(255, 255, 255, 0.95); 
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8)); 
+        }
+        :root:not(.light-mode) .am-btn span { 
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+        :root:not(.light-mode) #assistive-menu.active .am-btn:active { background: rgba(255, 255, 255, 0.15); }
+        
+        :root:not(.light-mode) .am-btn.am-home {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 60%, rgba(255,255,255,0.25)), color-mix(in srgb, var(--accent) 15%, rgba(0,0,0,0.4))) !important;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 
+                        inset 0 4px 12px rgba(255,255,255,0.3),
+                        inset 0 -4px 10px rgba(0,0,0,0.5) !important;
+        }
+        :root:not(.light-mode) .am-btn.am-home i, :root:not(.light-mode) .am-btn.am-home span { 
+            color: #fff !important; 
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8)) !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important; 
+        }
+
+        /* 展开动画：飞向各自的变量坐标并放大 */
+        #assistive-menu.active .am-btn {
+            transform: translate(var(--tx), var(--ty)) scale(1);
+            opacity: 1;
+        }
+
+        /* ========================================== */
+        /* ⚙️ 表盘扇形分布坐标 (阶梯延迟防卡顿) */
+        /* ========================================== */
+        .am-btn:nth-child(1) { --tx: 0px; --ty: -105px; transition-delay: 0.02s; }
+        .am-btn:nth-child(2) { --tx: 74.2px; --ty: -74.2px; transition-delay: 0.04s; }
+        .am-btn:nth-child(3) { --tx: 105px; --ty: 0px; transition-delay: 0.06s; }
+        .am-btn:nth-child(4) { --tx: 74.2px; --ty: 74.2px; transition-delay: 0.08s; }
+        .am-btn:nth-child(5) { --tx: 0px; --ty: 0px; transition-delay: 0s; } /* 中心大圆 */
+        .am-btn:nth-child(6) { --tx: 0px; --ty: 105px; transition-delay: 0.1s; }
+        .am-btn:nth-child(7) { --tx: -74.2px; --ty: 74.2px; transition-delay: 0.12s; }
+        .am-btn:nth-child(8) { --tx: -105px; --ty: 0px; transition-delay: 0.14s; }
+        .am-btn:nth-child(9) { --tx: -74.2px; --ty: -74.2px; transition-delay: 0.16s; }
+
+
 
           /* 谈心 App 专属小说化排版 */
         #heart-chat-app { 
@@ -4608,6 +4811,31 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
 /* 👆 新增结束 👆 */
 
 
+/* ========================================== */
+/* 彻底清除朋友圈头像粗线边框，改为极细高级风 */
+/* ========================================== */
+/* 背景封面上的用户大头像 */
+.moments-avatar { 
+    width: 65px !important; 
+    height: 65px !important; 
+    border-radius: 16px !important; 
+    object-fit: cover !important; 
+    border: 0.5px solid rgba(150,150,150,0.3) !important; /* 核心：用半透明极细线取代实心粗白线 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; 
+}
+
+/* 列表动态里的角色小头像 */
+.moment-avatar { 
+    width: 44px !important; 
+    height: 44px !important; 
+    border-radius: 12px !important; 
+    object-fit: cover !important; 
+    border: 0.5px solid rgba(150,150,150,0.2) !important; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important; 
+}
+
+
+
 
 
 
@@ -5472,26 +5700,27 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
         </div>
         <div class="scrollable" style="flex:1;">
             <!-- 2. 连通我的设定 APP，修复 ID 冲突确保数据绑定不出错 -->
-            <div class="my-card glass-effect" onclick="openApp('persona-app')">
-                <div class="my-avatar" id="chat-my-avatar-display"></div>
-                <div class="my-info">
-                    <h4 id="chat-my-name-display">我</h4><p>点击修改我的设定</p>
-                </div>
-            </div>
+            <div class="my-card" onclick="openApp('persona-app')">
+    <div class="my-avatar" id="chat-my-avatar-display"></div>
+    <div class="my-info">
+        <h4 id="chat-my-name-display">我</h4><p>点击修改我的设定</p>
+    </div>
+</div>
+
             <div style="font-size: 13px; font-weight: 700; color: var(--text-sub); margin: 25px 0 10px 25px; text-transform: uppercase;">All Contacts</div>
             <!-- 为防ID冲突，将这里的 ID 改为 chat-contact-list -->
             <div class="contact-list" id="chat-contact-list" style="padding: 0 15px;"></div>
         </div>
     </div>
 
-    <!-- ================= 3. 朋友圈 (Moments) 面板 (使用动态渐变背景) ================= -->
+        <!-- ================= 3. 朋友圈 (Moments) 面板 (使用动态渐变背景) ================= -->
     <div id="chat-panel-moments" class="chat-main-panel" style="display:none; flex-direction:column; height:100%; width:100%; position:relative; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent) 0%, var(--screen-bg) 60%);">
-        <!-- 3. 增加返回键 -->
-        <div class="moments-header" id="moments-header">
-            <i class="fas fa-chevron-left" onclick="goBack()" style="cursor:pointer; font-size: 20px; text-shadow: 0 1px 4px rgba(0,0,0,0.8);"></i>
-            <span class="mh-title" id="mh-title" style="opacity: 0; transition: opacity 0.3s; font-size: 20px;">Moments</span>
-            <!-- 原右上角相机图标隐藏，仅作为占位符维持 flex-between 左右平衡 -->
-            <i class="fas fa-camera" style="visibility: hidden; font-size: 22px;"></i>
+        
+        <!-- 👇 完美居中的头部排版：去掉冗余占位符，利用 flex:1 和等宽图标对齐 -->
+        <div class="moments-header" id="moments-header" style="align-items: center; padding: 50px 20px 15px !important;">
+            <i class="fas fa-chevron-left" onclick="goBack()" style="cursor:pointer; font-size: 20px; text-shadow: 0 1px 4px rgba(0,0,0,0.8); width: 30px;"></i>
+            <span class="mh-title" id="mh-title" style="opacity: 0; transition: opacity 0.3s; font-size: 18px; font-weight: bold; flex: 1; text-align: center;">Moments</span>
+            <i class="fas fa-cog" style="cursor:pointer; font-size: 20px; text-shadow: 0 1px 4px rgba(0,0,0,0.8); width: 30px; text-align: right;" onclick="openMomentsSettings()"></i>
         </div>
 
         <div class="scrollable" style="flex:1;" id="moments-scroll-area">
@@ -5504,25 +5733,25 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
             </div>
             <div class="moments-feed" id="moments-feed" style="padding-bottom: 20px;"></div>
         </div>
+        
         <div id="moments-comment-bar" class="moments-comment-bar glass-effect">
             <input type="text" id="moments-comment-input" placeholder="Comment...">
             <button onclick="submitMomentComment()">Send</button>
         </div>
 
-        <!-- 👇 新增：现代玻璃拟物风 悬浮操作按钮 (FAB) 👇 -->
-        <div id="moments-fab" class="glass-effect" onclick="promptPostMoment()" style="position: absolute; bottom: 25px; right: 20px; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 10; border: 1px solid rgba(255,255,255,0.15);">
+        <!-- 悬浮操作按钮 (FAB) -->
+        <div id="moments-fab" class="glass-effect" onclick="promptPostMoment()" style="position: absolute; bottom: 25px; right: 20px; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 10; border: 0.5px solid rgba(255,255,255,0.25);">
             <i class="fas fa-camera" style="font-size: 22px; color: var(--accent);"></i>
         </div>
     </div>
+
 
     <!-- ================= 底部统一液态导航栏 ================= -->
     <div class="chat-bottom-tab-bar glass-effect" id="chat-tab-bar">
         <div class="chat-tab-btn" onclick="switchChatAppTab('contacts', this)">
             <i class="fas fa-user-friends"></i><span>Contacts</span>
         </div>
-        <div class="chat-tab-btn active" onclick="switchChatAppTab('msg', this)">
-            <i class="fas fa-comment-dots"></i><span>Chats</span>
-        </div>
+       
         <div class="chat-tab-btn" onclick="switchChatAppTab('moments', this)">
             <i class="fas fa-camera-retro"></i><span>Moments</span>
         </div>
@@ -5972,24 +6201,81 @@ body.hide-chat-avatar #chat-app #chat-container .msg-wrapper.user {
             </div>
 
 
-                        <div id="memory-app" class="app-view scrollable">
-    <div class="memory-app-header glass-effect">
-        <div style="display: flex; align-items: center;">
-            <i class="fas fa-chevron-left" onclick="goBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
-            <span id="memory-book-title">专属记忆书</span>
+                                <!-- --- 记忆书 --- -->
+        <div id="memory-app" class="app-view scrollable">
+            <div class="memory-app-header glass-effect">
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-chevron-left" onclick="goBack()" style="color:var(--accent); font-size: 20px; margin-right: 15px; cursor:pointer;"></i>
+                    <span id="memory-book-title">专属记忆书</span>
+                    <!-- 新增角色切换下拉框 -->
+                    <select id="memory-char-select" onchange="switchMemoryChar()" style="margin-left: 8px; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 2px 5px; font-size: 12px; outline: none; max-width: 90px;"></select>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <i class="fas fa-cog" style="font-size: 18px; cursor: pointer; color: var(--text-sub);" onclick="openMemorySettings()" title="记忆提取设置"></i>
+                    <i class="fas fa-pen-nib" style="font-size: 20px; cursor: pointer; color: var(--accent);" onclick="openMemoryModal()" title="手动添加记忆"></i>
+                </div>
+            </div>
+            
+            <div class="status-tabs" style="margin: 15px 20px;">
+                <div class="tab-btn active" onclick="switchMemoryTab('all', this)">全部</div>
+                <div class="tab-btn" onclick="switchMemoryTab('fragment', this)">小日常</div>
+                <div class="tab-btn" onclick="switchMemoryTab('diary', this)">大事件(日记)</div>
+                <div class="tab-btn" onclick="switchMemoryTab('vector', this)">向量库</div>
+            </div>
+            
+            <div class="memory-app-list" id="memory-book-list"></div>
+            <div class="memory-app-list" id="vector-memory-list" style="display:none;"></div>
         </div>
-        <i class="fas fa-pen-nib" style="font-size: 20px; cursor: pointer; color: var(--accent);" onclick="openMemoryModal()"></i>
-    </div>
-    <!-- 👇 新增：记忆书顶部 Tab 👇 -->
-    <div class="status-tabs" style="margin: 15px 20px;">
-        <div class="tab-btn active" onclick="switchMemoryTab('normal', this)">常规记忆</div>
-        <div class="tab-btn" onclick="switchMemoryTab('vector', this)">紧密联系(知识库)</div>
-    </div>
-    <!-- 常规记忆列表 -->
-    <div class="memory-app-list" id="memory-book-list"></div>
-    <!-- 👇 新增：向量化记忆列表 (默认隐藏) 👇 -->
-    <div class="memory-app-list" id="vector-memory-list" style="display:none;"></div>
-</div>
+
+        <!-- 记忆书设置面板 (直接塞到 memory-app 的下方即可) -->
+        <div id="memory-settings-modal" class="modal-overlay" style="z-index: 6500;">
+            <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+                <div class="modal-header">
+                    <span onclick="document.getElementById('memory-settings-modal').style.display='none'" style="cursor:pointer; color:var(--text-sub);">关闭</span>
+                    <span>记忆自动化设置</span>
+                    <span style="opacity: 0;">空</span>
+                </div>
+                
+                <div class="settings-group-title">自动总结引擎 (仅对当前选中角色生效)</div>
+                <div class="setting-item" style="flex-direction: row; justify-content: space-between; align-items: center;">
+                    <span class="setting-label">开启自动总结</span>
+                    <label class="switch"><input type="checkbox" id="mem-auto-toggle" onchange="saveMemorySettings()"><span class="slider"></span></label>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label" style="display:flex; justify-content:space-between;">
+                        <span>小事情(碎片)总结间隔 (聊天轮数)</span>
+                        <span id="val-mem-frag-interval" style="color:var(--accent);">10</span>
+                    </span>
+                    <input type="range" id="mem-frag-interval" min="5" max="50" step="5" value="10" class="setting-input" style="accent-color: var(--accent); margin-top:10px;" oninput="document.getElementById('val-mem-frag-interval').innerText=this.value; saveMemorySettings();">
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label" style="display:flex; justify-content:space-between;">
+                        <span>大事件(日记)总结间隔 (聊天轮数)</span>
+                        <span id="val-mem-diary-interval" style="color:var(--accent);">50</span>
+                    </span>
+                    <input type="range" id="mem-diary-interval" min="20" max="200" step="10" value="50" class="setting-input" style="accent-color: var(--accent); margin-top:10px;" oninput="document.getElementById('val-mem-diary-interval').innerText=this.value; saveMemorySettings();">
+                </div>
+
+                <div class="settings-group-title">聊天读取记忆书设置 (全局生效)</div>
+                <div class="setting-item">
+                    <span class="setting-label" style="display:flex; justify-content:space-between;">
+                        <span>每次聊天发送给大模型的记忆条数</span>
+                        <span id="val-mem-inject-count" style="color:var(--accent);">20</span>
+                    </span>
+                    <input type="range" id="mem-inject-count" min="10" max="1000" step="10" value="20" class="setting-input" style="accent-color: var(--accent); margin-top:10px;" oninput="document.getElementById('val-mem-inject-count').innerText=this.value; saveMemorySettings();">
+                    <p style="font-size:11px; color:var(--text-sub); margin-top:5px; line-height:1.4;">提示：调大此数值能让 AI 记住更多久远前发生的事。100条~1000条为“超强重度记忆模式”，但这会急剧消耗 Tokens（API 费用）并拖慢回复速度！</p>
+                </div>
+
+                <div class="settings-group-title">独立总结 API 接口 (可选)</div>
+                <p style="font-size:11px; color:var(--text-sub); margin: 0 15px 10px;">默认跟随系统聊天的 API。若在这里填入独立 API，则后台总结记忆时会专用此接口，既不占用主聊天Token，又能防止主接口并发限流报错。</p>
+                <div class="setting-item"><span class="setting-label">API 网址 (URL)</span><input type="text" id="mem-api-url" class="setting-input" placeholder="留空则跟随全局" onchange="saveMemorySettings()"></div>
+                <div class="setting-item"><span class="setting-label">API 密钥 (Key)</span><input type="password" id="mem-api-key" class="setting-input" placeholder="留空则跟随全局" onchange="saveMemorySettings()"></div>
+                <div class="setting-item"><span class="setting-label">模型 (Model)</span><input type="text" id="mem-api-model" class="setting-input" placeholder="留空则跟随全局" onchange="saveMemorySettings()"></div>
+                
+                <div class="save-btn" style="margin-top: 15px; margin-bottom: 20px;" onclick="document.getElementById('memory-settings-modal').style.display='none'">确认并保存</div>
+            </div>
+        </div>
+
 
 
             <!-- 音乐播放器 App -->
@@ -9601,7 +9887,7 @@ function openChatWith(id) {
     const remoteBgEl = document.getElementById('remote-body-bg');
 
     }
-    switchChatAppTab('msg', document.querySelectorAll('.chat-tab-btn')[1]);
+    switchChatAppTab('msg', null);
 }
 
 
@@ -11063,9 +11349,9 @@ async function triggerAIResponse() {
         }
 
 
-        if (targetHistoryArr.length > 0 && targetHistoryArr.length % 10 === 0) {
-            setTimeout(() => generateAutoDiary(activeChar, targetHistoryArr.slice(-10)), 2000);
-        }
+        // 唤起新版记忆分离提取引擎
+processAutoMemory(targetCharId);
+
 
     } catch (e) {
         console.error(e); 
@@ -14230,97 +14516,205 @@ if (document.hidden) return;
     };
 
 
-        // ==========================================
-    // 🌟 极致仿 WeChat 朋友圈引擎 (支持 AI 发图与评论互动)
+            // ==========================================
+    // 🌟 极致朋友圈引擎 (全局时间线 + 自动后台发图发文)
     // ==========================================
-   let momentsData = [];
+    let momentsData = [];
+    let momentsSettings = JSON.parse(localStorage.getItem('ai_os_moments_settings')) || {
+        autoEnabled: true,
+        interval: 60,
+        lastCheckTime: Date.now()
+    };
 
-// 新增独立加载函数
-function loadMomentsData() {
-    if (!activeCharId) return;
-    const saved = localStorage.getItem(`ai_os_moments_${activeCharId}`);
-    momentsData = saved ? JSON.parse(saved) : [];
-}
+    // 1. 全局数据加载与保存 (不再区分角色)
+    function loadMomentsData() {
+        const saved = localStorage.getItem('ai_os_moments_global');
+        momentsData = saved ? JSON.parse(saved) : [];
+    }
 
-// 覆写原有的 saveMoments，绑定到当前角色
-function saveMoments() {
-    localStorage.setItem(`ai_os_moments_${activeCharId}`, JSON.stringify(momentsData));
-}
+    function saveMoments() {
+        localStorage.setItem('ai_os_moments_global', JSON.stringify(momentsData));
+    }
 
-
-    // 👇 新增：获取当前真实时间的函数
     function getMomentTimeStr() {
         const now = new Date();
         return `${now.getMonth() + 1}月${now.getDate()}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     }
 
-    // 👇 新增：删除朋友圈动态的函数
-    async function deleteMoment(idx, e) {
-        if(e) e.stopPropagation();
-        const confirm = await sysConfirm("删除动态", "确定要删除这条朋友圈吗？");
-        if(confirm) {
-            momentsData.splice(idx, 1);
-            saveMoments();
-            renderMoments();
+    // 2. 朋友圈设置弹窗操作
+    window.openMomentsSettings = function() {
+        document.getElementById('moments-auto-toggle').checked = momentsSettings.autoEnabled;
+        document.getElementById('moments-auto-interval').value = momentsSettings.interval;
+        document.getElementById('moments-interval-val').innerText = momentsSettings.interval + '分';
+        document.getElementById('moments-settings-modal').style.display = 'flex';
+    };
+
+    window.saveMomentsSettings = function() {
+        momentsSettings.autoEnabled = document.getElementById('moments-auto-toggle').checked;
+        momentsSettings.interval = parseInt(document.getElementById('moments-auto-interval').value);
+        localStorage.setItem('ai_os_moments_settings', JSON.stringify(momentsSettings));
+    };
+
+    // 3. 自动发朋友圈后台轮询引擎
+    setInterval(checkAllCharactersForMoments, 60 * 1000);
+    setTimeout(checkAllCharactersForMoments, 5000); // 开机延迟5秒检测一次
+
+    function checkAllCharactersForMoments() {
+        if (!momentsSettings.autoEnabled) return;
+        const now = Date.now();
+        let intervalMs = momentsSettings.interval * 60 * 1000;
+        
+        if (now - momentsSettings.lastCheckTime >= intervalMs) {
+            momentsSettings.lastCheckTime = now;
+            window.saveMomentsSettings();
+            
+            // 随机挑选一个没有被拉黑/删除的有效角色去发朋友圈
+            const validChars = characters.filter(c => !c.isBlocked && !c.isDeleted && !c.isBlockedByChar && !c.isDeletedByChar);
+            if (validChars.length > 0) {
+                const randomChar = validChars[Math.floor(Math.random() * validChars.length)];
+                generateAIMomentForChar(randomChar);
+            }
         }
     }
 
-    // 1. 初始化朋友圈
-    function initMoments() {
-  const bg = localStorage.getItem(`ai_os_moments_bg_${activeCharId}`);
+    // 4. 核心：AI构思并发布朋友圈功能
+    async function generateAIMomentForChar(char) {
+        const url = cleanBaseUrl(globalAPI.url);
+        if(!url || !globalAPI.key) return;
 
+        const prompt = `你现在正在使用微信朋友圈。请以【${char.name}】的身份发布一条最新动态。
+内容要求：展现你的性格（${char.prompt}），分享你的生活、吐槽、或者表达情绪。必须要有真人发朋友圈的“网感”和“活人感”。
+配图机制：如果适合配真实照片，请用英文写出AI绘图提示词；如果只想发纯文字，配图处请填 NONE。
+格式要求（严格按照下方格式输出，不要有任何多余字符）：
+动态文案内容|||英文画面提示词或NONE`;
+
+        try {
+            const res = await fetch(`${url}/chat/completions`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalAPI.key}` },
+                body: JSON.stringify({ model: globalAPI.model, messages: [{role: "user", content: prompt}], temperature: 0.9 })
+            });
+            const data = await res.json();
+            const reply = data.choices[0].message.content.trim();
+            const parts = reply.split('|||');
+            
+            let momentText = parts[0] ? parts[0].trim() : "今天也是美好的一天。";
+            let momentImgPrompt = parts[1] ? parts[1].trim() : "NONE";
+            let imgUrl = null;
+
+            if (momentImgPrompt !== "NONE" && momentImgPrompt.length > 3) {
+                imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(momentImgPrompt)}?width=800&height=800&nologo=true`;
+            }
+
+            loadMomentsData(); // 确保数据是最新的
+            momentsData.unshift({ author: char.name, text: momentText, image: imgUrl, time: getMomentTimeStr(), likes: [], comments: [] });
+            saveMoments();
+
+            // 如果用户正好停留在朋友圈页面，直接刷新渲染
+            const chatPanelMoments = document.getElementById('chat-panel-moments');
+            if (document.getElementById('moments-app')?.classList.contains('active') || 
+                (chatPanelMoments && chatPanelMoments.classList.contains('active'))) {
+                renderMoments();
+            }
+
+            showOsNotification("朋友圈新动态", `${char.name} 刚刚更新了朋友圈！`, char.avatar, 'chat-app');
+
+        } catch (e) {
+            console.warn("自动朋友圈生成失败:", e);
+        }
+    }
+
+    // 用户手动要求当前正在聊天的角色发朋友圈
+    async function generateAIMoment() {
+        const activeChar = characters.find(c => c.id === activeCharId);
+        if (!activeChar) return;
+        sysAlert("请稍候", `${activeChar.name} 正在构思发什么朋友圈...`);
+        await generateAIMomentForChar(activeChar);
+        const overlay = document.getElementById('sys-dialog-overlay');
+        if(overlay) overlay.style.display = 'none'; // 关掉弹窗
+    }
+
+    // 用户自己发朋友圈
+    async function promptPostMoment() {
+        const isMe = await sysConfirm("发布动态", "【确定】自己发一条记录\n【取消】让 AI 发一条朋友圈");
+        if (isMe) {
+            const text = await sysPrompt("发朋友圈", "记录一下此刻的心情吧：");
+            if (text) {
+                loadMomentsData();
+                momentsData.unshift({ author: globalUser.name, text: text.trim(), time: getMomentTimeStr(), likes: [], comments: [] });
+                saveMoments(); 
+                renderMoments();
+            }
+        } else {
+            generateAIMoment();
+        }
+    }
+
+
+    // 5. 初始化朋友圈页面与背景 (改为全局用户背景)
+    function initMoments() {
+        const bg = localStorage.getItem('ai_os_moments_bg_global');
+        if (bg && bg.startsWith('idb://')) {
             getImageFromDB(bg.replace('idb://', '')).then(r => { 
                 if (r) document.getElementById('moments-cover-img').src = r; 
             });
+        } else if (bg) {
+            document.getElementById('moments-cover-img').src = bg;
         }
+
         document.getElementById('moments-user-name').innerText = globalUser.name;
         document.getElementById('moments-user-avatar').src = globalUser.avatar;
 
-        const mApp = document.getElementById('moments-app');
-        mApp.addEventListener('scroll', () => {
-            const header = document.getElementById('moments-header');
-            const title = document.getElementById('mh-title');
-            if (mApp.scrollTop > 250) {
-                header.classList.add('scrolled'); title.style.opacity = 1;
-            } else {
-                header.classList.remove('scrolled'); title.style.opacity = 0;
-            }
-        });
+        const mApp = document.getElementById('moments-app') || document.getElementById('chat-panel-moments');
+        if (mApp) {
+            const scrollArea = document.getElementById('moments-scroll-area') || mApp;
+            scrollArea.addEventListener('scroll', () => {
+                const header = document.getElementById('moments-header');
+                const title = document.getElementById('mh-title');
+                if (scrollArea.scrollTop > 250) {
+                    header.classList.add('scrolled'); title.style.opacity = 1;
+                } else {
+                    header.classList.remove('scrolled'); title.style.opacity = 0;
+                }
+            });
 
-        mApp.addEventListener('click', (e) => {
-            if (!e.target.closest('.moments-comment-bar') && !e.target.closest('.moment-action-btn') && !e.target.closest('.moment-action-panel')) {
-                document.getElementById('moments-comment-bar').classList.remove('show');
-                document.querySelectorAll('.moment-action-panel').forEach(p => p.classList.remove('show'));
-            }
-        });
-    
+            mApp.addEventListener('click', (e) => {
+                if (!e.target.closest('.moments-comment-bar') && !e.target.closest('.moment-action-btn') && !e.target.closest('.moment-action-panel')) {
+                    const bar = document.getElementById('moments-comment-bar');
+                    if (bar) bar.classList.remove('show');
+                    document.querySelectorAll('.moment-action-panel').forEach(p => p.classList.remove('show'));
+                }
+            });
+        }
+    }
 
-    // 2. 背景上传
+    // 6. 背景上传
     async function handleMomentsBgUpload(e) {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = async function(event) {
             const imgId = 'mbg_' + Date.now();
             await saveImageToDB(imgId, event.target.result);
-   localStorage.setItem(`ai_os_moments_bg_${activeCharId}`, 'idb://' + imgId);
-lt;
+            localStorage.setItem('ai_os_moments_bg_global', 'idb://' + imgId);
+            document.getElementById('moments-cover-img').src = event.target.result;
         };
         reader.readAsDataURL(file); e.target.value = '';
     }
 
-    // 3. 渲染朋友圈动态
+    // 7. 渲染朋友圈动态
     function renderMoments() {
         const feed = document.getElementById('moments-feed');
+        if (!feed) return;
+        
         if (momentsData.length === 0) {
-            feed.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:40px; font-size:14px;">暂无动态，点击右上角相机发布第一条朋友圈吧~</div>';
+            feed.innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:40px; font-size:14px;">暂无动态，点击右下角相机发布第一条朋友圈吧~</div>';
             return;
         }
 
-        const activeChar = characters.find(c => c.id === activeCharId);
-        
         feed.innerHTML = momentsData.map((m, idx) => {
             const isMe = m.author === globalUser.name;
-            const avatar = isMe ? globalUser.avatar : activeChar.avatar;
+            // 通过名字在全局角色里找头像，找不到就给随机默认头像
+            const charObj = characters.find(c => c.name === m.author);
+            const avatar = isMe ? globalUser.avatar : (charObj ? charObj.avatar : `https://ui-avatars.com/api/?name=${m.author}&background=random`);
             
             let likesHtml = '';
             if (m.likes && m.likes.length > 0) {
@@ -14334,7 +14728,7 @@ lt;
             }
             let interactionArea = (likesHtml || commentsHtml) ? `<div class="moment-comments-area">${likesHtml}${commentsHtml}</div>` : '';
             
-            let imgHtml = m.image ? `<img src="${m.image}" class="moment-img">` : '';
+            let imgHtml = m.image && m.image !== "NONE" ? `<img src="${m.image}" class="moment-img">` : '';
 
             return `
             <div class="moment-item">
@@ -14343,14 +14737,13 @@ lt;
                     <div class="moment-author">${m.author}</div>
                     <div class="moment-text">${m.text}</div>
                     ${imgHtml}
-                                        <div class="moment-footer">
+                    <div class="moment-footer">
                         <div>
                             <span class="moment-time">${m.time}</span>
                             <span style="color:#576b95; font-size:13px; margin-left:12px; cursor:pointer;" onclick="deleteMoment(${idx}, event)">删除</span>
                         </div>
                         <div class="moment-action-btn" onclick="toggleMomentAction(${idx}, event)"></div>
                         <div class="moment-action-panel" id="map-${idx}">
-
                             <div class="map-btn" onclick="toggleMomentLike(${idx}, event)"><i class="far fa-heart"></i> 赞</div>
                             <div class="map-divider"></div>
                             <div class="map-btn" onclick="openMomentComment(${idx}, event)"><i class="far fa-comment-dots"></i> 评论</div>
@@ -14362,6 +14755,16 @@ lt;
         }).join('');
     }
 
+    async function deleteMoment(idx, e) {
+        if(e) e.stopPropagation();
+        const confirm = await sysConfirm("删除动态", "确定要删除这条朋友圈吗？");
+        if(confirm) {
+            momentsData.splice(idx, 1);
+            saveMoments();
+            renderMoments();
+        }
+    }
+
     function toggleMomentAction(idx, e) {
         e.stopPropagation();
         const panel = document.getElementById('map-' + idx);
@@ -14370,7 +14773,7 @@ lt;
         if (!isShowing) panel.classList.add('show');
     }
 
-    // 4. 点赞与评论
+    // 8. 点赞与评论
     function toggleMomentLike(idx, e) {
         e.stopPropagation();
         const m = momentsData[idx];
@@ -14383,13 +14786,16 @@ lt;
         saveMoments(); renderMoments();
     }
 
+    let currentMomentCommentIdx = null;
     function openMomentComment(idx, e) {
         e.stopPropagation();
         currentMomentCommentIdx = idx;
         document.querySelectorAll('.moment-action-panel').forEach(p => p.classList.remove('show'));
         const bar = document.getElementById('moments-comment-bar');
-        bar.classList.add('show');
-        document.getElementById('moments-comment-input').focus();
+        if(bar) {
+            bar.classList.add('show');
+            document.getElementById('moments-comment-input').focus();
+        }
     }
 
     async function submitMomentComment() {
@@ -14402,84 +14808,37 @@ lt;
         if (!m.comments) m.comments = [];
         m.comments.push({ author: globalUser.name, text: text });
         input.value = '';
-        document.getElementById('moments-comment-bar').classList.remove('show');
+        const bar = document.getElementById('moments-comment-bar');
+        if(bar) bar.classList.remove('show');
         
         saveMoments(); renderMoments();
 
-                // 🚨 灵魂交互：无论是谁的帖子，AI都会来互动回复
-        const activeChar = characters.find(c => c.id === activeCharId);
-        triggerAIMomentReply(currentMomentCommentIdx, text, activeChar);
-
-    }
-
-    function saveMoments() { localStorage.setItem('ai_os_moments', JSON.stringify(momentsData)); }
-
-    // 5. 让用户选择谁发动态
-    async function promptPostMoment() {
-        const isMe = await sysConfirm("发布动态", "【确定】自己发一条记录\n【取消】让 AI 发一条朋友圈");
-        if (isMe) {
-            const text = await sysPrompt("发朋友圈", "记录一下此刻的心情吧：");
-            if (text) {
-momentsData.unshift({ author: globalUser.name, text: text.trim(), time: getMomentTimeStr() });
-                saveMoments(); renderMoments();
-            }
-        } else {
-            generateAIMoment();
+        // 🚨 灵魂交互：AI回复评论机制 (根据帖子是谁发的来判定)
+        const authorChar = characters.find(c => c.name === m.author);
+        if (authorChar) {
+            // 如果是 AI 发的帖子，由该 AI 自动回复
+            triggerAIMomentReply(currentMomentCommentIdx, text, authorChar);
+        } else if (activeCharId) {
+            // 如果是用户发的帖子，让当前正在聊天的 AI 来进行点评互动
+            const currentActiveChar = characters.find(c => c.id === activeCharId);
+            if (currentActiveChar) triggerAIMomentReply(currentMomentCommentIdx, text, currentActiveChar);
         }
     }
 
-    // 6. AI 自己构思并发布朋友圈！
-    async function generateAIMoment() {
-        const activeChar = characters.find(c => c.id === activeCharId);
-        const url = cleanBaseUrl(globalAPI.url);
-        if(!url || !globalAPI.key) return sysAlert("错误", "请先配置 API 密钥");
-
-        sysAlert("请稍候", `${activeChar.name} 正在构思发什么朋友圈...`);
-
-        const prompt = `你正在使用微信朋友圈。请以【${activeChar.name}】的身份发布一条最新动态。
-内容要求：展现你的性格（${activeChar.prompt}），可以吐槽生活、表达对用户的思念、或者描绘沿途风景。必须有“网感”和“活人感”。
-配图机制：如果你觉得这条动态适合配一张真实照片（例如咖啡、风景、猫、街道），请写出一句英文的 AI 绘图提示词；如果只想发纯文字，配图处请填 NONE。
-严格格式要求（不得有任何多余字符）：
-动态文案内容|||英文画面提示词或NONE`;
-
-        try {
-            const res = await fetch(`${url}/chat/completions`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalAPI.key}` },
-                body: JSON.stringify({ model: globalAPI.model, messages: [{role: "system", content: prompt}], temperature: 0.9 })
-            });
-            const data = await res.json();
-            const reply = data.choices[0].message.content.trim();
-            const parts = reply.split('|||');
-            
-            let momentText = parts[0] ? parts[0].trim() : "今天也是美好的一天。";
-            let momentImgPrompt = parts[1] ? parts[1].trim() : "NONE";
-            let imgUrl = null;
-
-            if (momentImgPrompt !== "NONE" && momentImgPrompt.length > 3) {
-                // 利用全网最强免 Key 前端画图接口
-                imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(momentImgPrompt)}?width=800&height=800&nologo=true`;
-            }
-
-            document.getElementById('sys-dialog-overlay').style.display = 'none'; // 关掉弹窗
-            
- momentsData.unshift({ author: activeChar.name, text: momentText, image: imgUrl, time: getMomentTimeStr() });
-           saveMoments(); renderMoments();
-
-        } catch (e) {
-            sysAlert("错误", "AI 构思失败了，可能网络出错了...");
-        }
-    }
-
-        // 7. AI 后台自动回复朋友圈评论！
     async function triggerAIMomentReply(momentIdx, userComment, char) {
         const m = momentsData[momentIdx];
         const url = cleanBaseUrl(globalAPI.url);
         if(!url || !globalAPI.key) return;
 
-        const prompt = `在微信朋友圈里，你发了这条动态："${m.text}"。
+        let prompt = "";
+        if (m.author === char.name) {
+            prompt = `在微信朋友圈里，你发了这条动态："${m.text}"。
 用户（${globalUser.name}）刚刚给你评论了："${userComment}"。
 请以【${char.name}】的身份，直接回复TA，控制在1~2条短句内。不要括号描写动作。`;
-
+        } else {
+            prompt = `在微信朋友圈里，用户（${globalUser.name}）给一条动态(内容："${m.text}")发表了评论："${userComment}"。
+你作为用户列表里的朋友【${char.name}】也看到了。请用你的口吻在下面跟着回复或者吐槽，控制在1~2条短句内。`;
+        }
 
         try {
             const res = await fetch(`${url}/chat/completions`, {
@@ -14492,23 +14851,31 @@ momentsData.unshift({ author: globalUser.name, text: text.trim(), time: getMomen
             setTimeout(() => {
                 m.comments.push({ author: char.name, text: `回复 ${globalUser.name}: ${reply}` });
                 saveMoments();
+                
                 // 如果用户还停留在朋友圈界面，刷新渲染
-                if(document.getElementById('moments-app').classList.contains('active')) renderMoments();
+                const chatPanelMoments = document.getElementById('chat-panel-moments');
+                if (document.getElementById('moments-app')?.classList.contains('active') || 
+                    (chatPanelMoments && chatPanelMoments.classList.contains('active'))) {
+                    renderMoments();
+                }
             }, 3000); // 延迟3秒回复，增加真实感
             
         } catch (e) {}
     }
 
-    // 拦截拦截打开 App 事件，注入渲染
+    // 拦截原有的 openApp 事件：确保每次独立打开朋友圈 App 时都能最新加载
+    if (typeof _originalOpenAppMoments === 'undefined') {
         const _originalOpenAppMoments = openApp;
-    openApp = function(appId) {
-        _originalOpenAppMoments(appId);
-        if(appId === 'moments-app') {
-            loadMomentsData(); // 👈 新增：确保打开时数据是最新的
-            initMoments();
-            renderMoments();
-        }
-    };
+        window.openApp = function(appId) {
+            _originalOpenAppMoments(appId);
+            if(appId === 'moments-app') {
+                loadMomentsData(); 
+                initMoments();
+                renderMoments();
+            }
+        };
+    }
+
 
 
     // ==========================================
@@ -14523,8 +14890,8 @@ momentsData.unshift({ author: globalUser.name, text: text.trim(), time: getMomen
             char.remoteParts = [
                 { id: 'head', name: '头部', action: '抚摸了', top: '15%', left: '50%' },
                 { id: 'hands', name: '手部', action: '握住了', top: '45%', left: '25%' },
-                { id: 'genitals', name: '生殖器官', action: '触碰了敏感部位', top: '55%', left: '50%' },
-                { id: 'buttocks', name: '臀部', action: '揉捏了', top: '65%', left: '50%' },
+                { id: 'genitals', name: '小肚子', action: '触碰了敏感部位', top: '55%', left: '50%' },
+                { id: 'buttocks', name: '小耳朵', action: '揉捏了', top: '65%', left: '50%' },
                 { id: 'legs', name: '腿部', action: '抚摸了大腿', top: '75%', left: '35%' },
                 { id: 'feet', name: '脚部', action: '把玩了脚踝', top: '90%', left: '50%' }
             ];
@@ -18292,8 +18659,9 @@ async function triggerAIResponse() {
           const totalMemories = JSON.parse(localStorage.getItem(`ai_os_memories_${activeCharId}`) || '[]');
         if (totalMemories.length > 0) {
             const riddleMemories = totalMemories.filter(m => m.type === 'riddle').slice(0, 5);
-            const otherMemories = totalMemories.filter(m => m.type !== 'riddle').slice(0, 10);
-            let memStr = otherMemories.map(m => `[${m.time}]: ${m.text}`).join('\n');
+  const injectCount = globalAPI.memoryInjectCount || 20; // 根据用户可配置的滑块抓取记忆条数，最高可达1000条
+const otherMemories = totalMemories.filter(m => m.type !== 'riddle').slice(0, injectCount);
+          let memStr = otherMemories.map(m => `[${m.time}]: ${m.text}`).join('\n');
             if (riddleMemories.length > 0) {
                 memStr += `\n\n【平行频道的交互记忆（如果你遇到了其他身份的我，随时跟我分享、八卦或吐槽这些经历！）】：\n` + riddleMemories.map(m => `[${m.time}]: ${m.text}`).join('\n');
             }
@@ -25946,6 +26314,249 @@ function toggleLockScreen() {
     globalAPI.enableLockScreen = document.getElementById('global-lockscreen-toggle').checked;
     localStorage.setItem('ai_os_global_api', JSON.stringify(globalAPI));
 }
+
+
+// ==========================================
+// 🧠 全新结构化记忆书引擎 (小事/大事/多角色/独立API)
+// ==========================================
+let currentMemoryCharId = null;
+let currentMemoryFilter = 'all';
+
+// 获取角色独立记忆配置
+function getMemorySettings(charId) {
+    let char = characters.find(c => c.id === charId);
+    if (!char) return null;
+    return char.memorySettings || {
+        autoEnabled: true,
+        fragInterval: 10,
+        diaryInterval: 50,
+        chatCounter: 0,
+        apiUrl: "", apiKey: "", apiModel: ""
+    };
+}
+
+// 拦截加载：打开应用时挂载当前角色的下拉选项，并读取配置
+const _originalOpenAppMemoryEngine = openApp;
+openApp = function(appId) {
+    _originalOpenAppMemoryEngine(appId);
+    if(appId === 'memory-app') {
+        currentMemoryCharId = activeCharId;
+        const sel = document.getElementById('memory-char-select');
+        if (sel) {
+            sel.innerHTML = characters.map(c => `<option value="${c.id}" ${c.id === currentMemoryCharId ? 'selected' : ''}>${c.name}</option>`).join('');
+        }
+        
+        // 恢复全局注入条数回显
+        if (typeof globalAPI.memoryInjectCount === 'undefined') globalAPI.memoryInjectCount = 20;
+        document.getElementById('mem-inject-count').value = globalAPI.memoryInjectCount;
+        document.getElementById('val-mem-inject-count').innerText = globalAPI.memoryInjectCount;
+
+        currentMemoryFilter = 'all';
+        document.querySelectorAll('#memory-app .tab-btn').forEach((b, i) => {
+            if(i === 0) b.classList.add('active'); else b.classList.remove('active');
+        });
+        document.getElementById('memory-book-list').style.display = 'flex';
+        document.getElementById('vector-memory-list').style.display = 'none';
+        
+        renderMemoryBook();
+    }
+};
+
+window.switchMemoryChar = function() {
+    const sel = document.getElementById('memory-char-select');
+    currentMemoryCharId = parseInt(sel.value);
+    renderMemoryBook();
+    if (document.getElementById('vector-memory-list').style.display !== 'none') {
+        renderVectorMemories();
+    }
+};
+
+window.switchMemoryTab = function(tabId, btnEl) {
+    document.querySelectorAll('#memory-app .tab-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+    
+    if (tabId === 'vector') {
+        document.getElementById('memory-book-list').style.display = 'none';
+        document.getElementById('vector-memory-list').style.display = 'flex';
+        renderVectorMemories();
+    } else {
+        document.getElementById('memory-book-list').style.display = 'flex';
+        document.getElementById('vector-memory-list').style.display = 'none';
+        currentMemoryFilter = tabId;
+        renderMemoryBook();
+    }
+};
+
+window.renderMemoryBook = function() { 
+    const mems = JSON.parse(localStorage.getItem(`ai_os_memories_${currentMemoryCharId}`) || '[]'); 
+    const list = document.getElementById('memory-book-list'); 
+    
+    let filteredMems = mems;
+    if (currentMemoryFilter !== 'all') {
+        filteredMems = mems.filter(m => m.type === currentMemoryFilter);
+    }
+    
+    if(filteredMems.length === 0) { 
+        list.innerHTML = '<p style="color:var(--text-sub); text-align:center; padding-top:40px;">此界空空如也，唯有时间流逝...</p>'; 
+        return; 
+    } 
+    
+    // 给不同类型的记忆挂载不同的角标颜色
+    list.innerHTML = filteredMems.map((m) => {
+        let realIndex = mems.findIndex(orig => (orig.id === m.id) || (orig.time === m.time && orig.text === m.text));
+        let badgeStyle, badgeText;
+        if (m.type === 'diary') { badgeStyle = 'background:rgba(255,69,58,0.1); color:#ff453a; right:35px;'; badgeText = '大事件(日记)'; }
+        else if (m.type === 'fragment') { badgeStyle = 'background:rgba(135,192,202,0.2); color:var(--accent); right:35px;'; badgeText = '日常碎片'; }
+        else if (m.type === 'manual') { badgeStyle = 'background:rgba(255,255,255,0.1); color:var(--text-main); right:35px;'; badgeText = '手写记事'; }
+        else if (m.type === 'riddle') { badgeStyle = 'background:rgba(243,156,18,0.1); color:#f39c12; right:35px;'; badgeText = '平行宇宙'; }
+        else { badgeStyle = 'background:rgba(135,192,202,0.2); color:var(--accent); right:35px;'; badgeText = 'AI 记忆沉淀'; }
+        
+        return `
+        <div class="memory-card">
+            <div class="ai-badge" style="${badgeStyle}">${badgeText}</div>
+            <i class="fas fa-trash-alt" style="position: absolute; top: 12px; right: 12px; color: #ff453a; opacity: 0.8; cursor: pointer; font-size: 14px; padding: 5px;" onclick="deleteMemoryItem(${realIndex})"></i>
+            <p>${m.text}</p>
+            <div class="time">${m.time}</div>
+        </div>
+        `;
+    }).join(''); 
+};
+
+// 复写旧版的删除和添加方法，使其完全依赖当前选定的角色
+window.deleteMemoryItem = async function(index) {
+    const confirmDel = await sysConfirm("删除记忆", "确定要彻底删除这条记忆吗？\n删除后 AI 将无法再回想起这件事。");
+    if(confirmDel) {
+        const key = `ai_os_memories_${currentMemoryCharId}`;
+        let mems = JSON.parse(localStorage.getItem(key) || '[]');
+        mems.splice(index, 1); 
+        localStorage.setItem(key, JSON.stringify(mems));
+        renderMemoryBook(); 
+    }
+};
+
+window.addMemoryData = function(text, type='fragment', specificCharId = null) { 
+    const targetId = specificCharId || currentMemoryCharId || activeCharId;
+    const key = `ai_os_memories_${targetId}`; 
+    const mems = JSON.parse(localStorage.getItem(key) || '[]'); 
+    mems.unshift({ id: 'mem_' + Date.now(), text: text, time: new Date().toLocaleString(), type: type }); 
+    localStorage.setItem(key, JSON.stringify(mems)); 
+    
+    if(document.getElementById('memory-app').classList.contains('active') && currentMemoryCharId === targetId) {
+        renderMemoryBook(); 
+    }
+};
+
+window.submitTextModal = function() { 
+    const text = document.getElementById('modal-textarea').value.trim(); 
+    if(text) addMemoryData(text, 'manual', currentMemoryCharId); 
+    closeTextModal(); 
+};
+
+// ===== 设置读取与保存 =====
+window.openMemorySettings = function() {
+    const memSettings = getMemorySettings(currentMemoryCharId);
+    document.getElementById('mem-auto-toggle').checked = memSettings.autoEnabled;
+    document.getElementById('mem-frag-interval').value = memSettings.fragInterval;
+    document.getElementById('val-mem-frag-interval').innerText = memSettings.fragInterval;
+    document.getElementById('mem-diary-interval').value = memSettings.diaryInterval;
+    document.getElementById('val-mem-diary-interval').innerText = memSettings.diaryInterval;
+    
+    document.getElementById('mem-api-url').value = memSettings.apiUrl || '';
+    document.getElementById('mem-api-key').value = memSettings.apiKey || '';
+    document.getElementById('mem-api-model').value = memSettings.apiModel || '';
+    
+    document.getElementById('memory-settings-modal').style.display = 'flex';
+};
+
+window.saveMemorySettings = function() {
+    const char = characters.find(c => c.id === currentMemoryCharId);
+    if (char) {
+        char.memorySettings = {
+            autoEnabled: document.getElementById('mem-auto-toggle').checked,
+            fragInterval: parseInt(document.getElementById('mem-frag-interval').value),
+            diaryInterval: parseInt(document.getElementById('mem-diary-interval').value),
+            chatCounter: char.memorySettings ? char.memorySettings.chatCounter : 0,
+            apiUrl: document.getElementById('mem-api-url').value.trim(),
+            apiKey: document.getElementById('mem-api-key').value.trim(),
+            apiModel: document.getElementById('mem-api-model').value.trim()
+        };
+        saveAllCharacters();
+    }
+    
+    globalAPI.memoryInjectCount = parseInt(document.getElementById('mem-inject-count').value);
+    localStorage.setItem('ai_os_global_api', JSON.stringify(globalAPI));
+};
+
+// ===== 全新后台自动总结轮询提取引擎 =====
+async function processAutoMemory(charId) {
+    const char = characters.find(c => c.id === charId);
+    if (!char) return;
+    if (!char.memorySettings) {
+        char.memorySettings = { autoEnabled: true, fragInterval: 10, diaryInterval: 50, chatCounter: 0, apiUrl: "", apiKey: "", apiModel: "" };
+    }
+    if (!char.memorySettings.autoEnabled) return;
+    
+    char.memorySettings.chatCounter = (char.memorySettings.chatCounter || 0) + 1;
+    let count = char.memorySettings.chatCounter;
+    saveAllCharacters();
+
+    const history = JSON.parse(localStorage.getItem(`ai_os_chat_${charId}`) || '[]');
+    if (history.length === 0) return;
+
+    // 是否达到大事件(日记)总结 (优先级最高)
+    if (count % char.memorySettings.diaryInterval === 0) {
+        let slice = history.filter(m => m.role !== 'system').slice(-(char.memorySettings.diaryInterval * 2)); 
+        setTimeout(() => executeMemoryExtraction(char, slice, 'diary'), 2000);
+    } 
+    // 是否达到小事情(碎片)总结
+    else if (count % char.memorySettings.fragInterval === 0) {
+        let slice = history.filter(m => m.role !== 'system').slice(-(char.memorySettings.fragInterval * 2));
+        setTimeout(() => executeMemoryExtraction(char, slice, 'fragment'), 2000);
+    }
+}
+
+async function executeMemoryExtraction(char, recentLogs, type) {
+    const memSettings = char.memorySettings || {};
+    // 优先使用独立 API（如果有），没填则兜底全局 API 
+    const url = cleanBaseUrl(memSettings.apiUrl || globalAPI.url);
+    const key = memSettings.apiKey || globalAPI.key;
+    const model = memSettings.apiModel || globalAPI.model;
+
+    if(!url || !key) return;
+
+    let conversationSlice = recentLogs.map(m => `${m.role === 'user' ? '用户' : char.name}: ${m.rawApiContent || m.content}`).join('\n');
+    if (!conversationSlice.trim()) return;
+
+    let sysPromptText = "";
+    if (type === 'diary') {
+        sysPromptText = `你是一个情感细腻的日记记录者。请根据以下的最新聊天记录，总结归纳这一阶段发生的大事情、重要剧情推进、或者双方情感的变化。
+要求：
+1. 采用日记的手法，结构分明，条理清晰。
+2. 提炼核心剧情，抛弃无意义的废话。
+3. 字数 150-300 字。纯文本输出，不要 Markdown。`;
+    } else {
+        sysPromptText = `请提取这段对话中发生的小事情或碎片化行为事实（例如：吃饭、喝水、看了什么电影、提到的小喜好等）。
+要求：
+1. 极其简短，控制在 30-80 字。
+2. 一句话或两句话总结，不要客套。纯文本输出。`;
+    }
+
+    try {
+        const res = await fetch(`${url}/chat/completions`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` }, 
+            body: JSON.stringify({ model: model, messages: [{role: "system", content: sysPromptText}, {role: "user", content: conversationSlice}], temperature: 0.5 }) 
+        });
+        if (res.ok) { 
+            const data = await res.json(); 
+            let summary = data.choices[0]?.message?.content; 
+            if(summary) addMemoryData(summary.trim(), type, char.id); 
+        }
+    } catch (e) {
+        console.warn("后台记忆自动总结提取失败:", e);
+    }
+}
+
 
 
 
